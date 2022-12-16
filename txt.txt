@@ -1,0 +1,24 @@
+N2: OS liberada e encaminhada para a Assistência.
+
+MATHEUSVYNICIUS - 16/12/2022 - 01:37
+--------------------------------------------------
+N2: OS temporariamente retida pelo N2.
+
+MATHEUSVYNICIUS - 16/12/2022 - 01:37
+--------------------------------------------------
+N2: ONU ONLINE, Histórico de sinal OK, sem alarmes recorrentes. PPPoE sem múltiplas desconexões e conectado no momento da análise. OS liberada e encaminhada para a Assistência.
+
+MATHEUSVYNICIUS - 16/12/2022 - 01:37
+--------------------------------------------------
+N2: ONU OFFLINE, com alarme de LOS. Histórico de sinal OK e Porta normal. OS liberada e encaminhada para a Assistência.
+
+MATHEUSVYNICIUS - 16/12/2022 - 01:37
+-------------------------------------------------- 
+N2: Realizadas tentativas de retorno, mas sem contato com o cliente.
+
+MATHEUSVYNICIUS - 16/12/2022 - 01:37
+--------------------------------------------------
+N2: Alterado Port Rate de 100M para 1000M e reiniciado ONU remotamente. Feito contato com o cliente e realizado o teste de velocidade que bateram próximo do contratado. Autorizado cancelamento de OS.
+
+MATHEUSVYNICIUS - 16/12/2022 - 01:37
+--------------------------------------------------
