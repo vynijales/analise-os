@@ -1,0 +1,1 @@
+A pasta dist contém o arquivo "main.exe", arquivo executável que necessita dos arquivos "txt.txt" e "user/user.txt" para rodar o script corretamente.
