@@ -1,16 +1,21 @@
 from tkinter import *
+from tkinter import ttk
 import pyperclip as pc
 import datetime
 
+from calendar import month_name
+    
 obs = ""
 setor = "N2: "
-user = ""
+list_user = ["ANAFREITAS", "EDUARDOBARRETO", "IGOR", "JOYCEJORDANIA", "MATHEUSVYNICIUS", "NAELSONGERMANO"
+        ]
+
 fim = ""
 
 def atualizar():
     global user
 
-    user = ent_user.get()
+    user = cb_user.get()
 
     obs = setor + fim + "\n\n" + user + rodape
 
@@ -22,9 +27,13 @@ def clear():
     obs = ""
     setor = ""
     fim = ""
+    rodape = ""
+
+    cb_user.set('')
 
     rb_liberada.Checkbutton = False
     rb_retida.Checkbutton = False
+
     atualizar()
 
 def ctrlc():
@@ -47,13 +56,17 @@ window = Tk()
 
 window.title("Análise do N2")
 
+# LABEL AND COMBOBOX - USER
 
-# LABEL AND ENTRY - USER
+lb_user = Label(window, text="USUÁRIO: ")
+lb_user.grid(column=0, row=0, padx=10, pady=10)
 
-lb_user = Label(window, text="Usuário: ")
-lb_user.grid(row=0, column=0)
-ent_user = Entry(window)
-ent_user.grid(row=0, column=1)
+selected_user = StringVar()
+cb_user = ttk.Combobox(window, textvariable=selected_user,)
+cb_user['values'] = list_user
+# prevent typing a value
+cb_user['state'] = 'readonly'
+cb_user.grid(column=1,row=0)
 
 # TEXTO PRINCIPAL
 text_obs = Text(window, width = 60, height=10)
@@ -80,7 +93,7 @@ today = datetime.datetime.now()
 
 td = today.strftime("%d/%m/%Y - %H:%M")
 
-user = ent_user.get()
+user = cb_user.get()
 rodape = f" - {td}\n"+("-"*51)
 
 window.mainloop()
