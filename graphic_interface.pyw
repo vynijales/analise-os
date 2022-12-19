@@ -38,6 +38,7 @@ def clear():
 
     rb_liberada.Checkbutton = False
     rb_retida.Checkbutton = False
+    rb_cancelada.Checkbutton = False
 
     atualizar()
 
@@ -58,6 +59,11 @@ def liberada():
 def retida():
     global fim
     fim = "OS temporariamente retida pelo N2."
+    atualizar()
+
+def cancelada():
+    global fim
+    fim = "Realizado contato com o titular e confirmado normalidade, autorizado cancelamento da OS. Favor baixar sem execução."
     atualizar()
 
 
@@ -83,24 +89,27 @@ cb_user.bind("<<ComboboxSelected>>", selected)
 
 
 # TEXTO PRINCIPAL
-text_obs = Text(window, width = 60, height=10)
-text_obs.grid(column=0, row=1, columnspan=4)
+text_obs = Text(window, width = 55, height=10)
+text_obs.grid(column=0, row=1, columnspan=5)
 
 # RADIO BUTTONS - OS LIBERADA / RETIDA
 var = IntVar()
 
 rb_retida = Radiobutton(window, text = "OS retida", variable = var, value = 1, command=retida)
-rb_retida.grid(column=0, row=3, padx = 5, pady = 5)
+rb_retida.grid(column=0, row=4, padx = 5, pady = 5)
  
 rb_liberada = Radiobutton(window, text = "OS liberada", variable = var, value = 2, command=liberada)
-rb_liberada.grid(column=1, row=3, padx = 5, pady = 5)
+rb_liberada.grid(column=1, row=4, padx = 5, pady = 5)
+
+rb_cancelada = Radiobutton(window, text = "OS cancelada", variable = var, value = 3, command=cancelada)
+rb_cancelada.grid(column=2, row=4, padx = 5, pady = 5)
 
 # BUTTON CLEAR
 bt_clear = Button(window, text = "Limpar", command=clear)
-bt_clear.grid(column=2, row=3, padx=10, pady=10)
+bt_clear.grid(column=3, row=4, padx=10, pady=10)
 
 # BUTTON COPY
 bt_copy = Button(window, text = "Copiar", command=ctrlc)
-bt_copy.grid(column=3, row=3, padx=10, pady=10)
+bt_copy.grid(column=4, row=4, padx=10, pady=10)
 
 window.mainloop()
