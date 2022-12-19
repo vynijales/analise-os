@@ -15,19 +15,24 @@ fim = ""
 def atualizar():
     global user
 
+
     user = cb_user.get()
 
-    obs = setor + fim + "\n\n" + user + rodape
+    obs = setor + fim + "\n\n" + user + rodape()
 
     text_obs.delete("1.0","end")
     text_obs.insert(END, obs)
-        
+
+def rodape():
+    today = datetime.datetime.now()
+    td = today.strftime("%d/%m/%Y - %H:%M")
+    
+    return f" - {td}\n"+("-"*51)
+
 def clear():
     global obs, setor, fim, rodape
-    obs = ""
-    setor = ""
+    #setor = ""
     fim = ""
-    rodape = ""
 
     cb_user.set('')
 
@@ -39,6 +44,11 @@ def clear():
 def ctrlc():
     text = text_obs.get("1.0","end-1c")
     pc.copy(text)
+
+def selected(event):
+    value = event.widget.get()
+    #print("value: '{}'".format(value))
+    atualizar()
 
 def liberada():
     global fim
@@ -62,11 +72,15 @@ lb_user = Label(window, text="USUÁRIO: ")
 lb_user.grid(column=0, row=0, padx=10, pady=10)
 
 selected_user = StringVar()
-cb_user = ttk.Combobox(window, textvariable=selected_user,)
+cb_user = ttk.Combobox(window, textvariable=selected_user)
 cb_user['values'] = list_user
 # prevent typing a value
 cb_user['state'] = 'readonly'
+cb_user.bind(atualizar)
 cb_user.grid(column=1,row=0)
+
+cb_user.bind("<<ComboboxSelected>>", selected)
+
 
 # TEXTO PRINCIPAL
 text_obs = Text(window, width = 60, height=10)
@@ -88,12 +102,5 @@ bt_clear.grid(column=2, row=3, padx=10, pady=10)
 # BUTTON COPY
 bt_copy = Button(window, text = "Copiar", command=ctrlc)
 bt_copy.grid(column=3, row=3, padx=10, pady=10)
-
-today = datetime.datetime.now()
-
-td = today.strftime("%d/%m/%Y - %H:%M")
-
-user = cb_user.get()
-rodape = f" - {td}\n"+("-"*51)
 
 window.mainloop()
