@@ -15,6 +15,7 @@ txt_sem_acesso = {"onu": "",
 "alarm": "",
 "pppoe": "",
 "desc": "",
+"hist": "",
 }
 
 list_user = ["ANAFREITAS", "EDUARDOBARRETO", "IGOR", "JOYCEJORDANIA", "MATHEUSVYNICIUS", "NAELSONGERMANO"]
@@ -95,11 +96,13 @@ def sem_acesso():
 
     cb_alarm.grid(column=3, row=4,)
 
+    
+    cb_hist.grid(column=4, row=4, padx = 5, pady = 5)
+
     lb_pppoe.grid(column=0, row=5, padx = 5, pady = 5)
     cb_pppoe.grid(column=1, row=5, padx = 5, pady = 5)
     
     cb_desc.grid(column=2, row=5, padx = 5, pady = 5)
-
 
     txt_sem_acesso["onu"] = f"ONU {cb_onu.get()}"
 
@@ -111,7 +114,13 @@ def sem_acesso():
     if cb_alarm.get() == list_alarm[0]:
         txt_sem_acesso["alarm"] = "com alarmes recorrentes de LOS/Energia"
     else:
-        txt_sem_acesso["alarm"] = "sem alarmes recorrentes"
+        txt_sem_acesso["alarm"] = "sem alarmes de quedas recorrentes"
+
+    if cb_hist.get() == list_hist[0]:
+        txt_sem_acesso["hist"] = "histórico de sinal normal"
+    else:
+        txt_sem_acesso["hist"] = "com histórico de sinal alterado em -30.0 dBm"
+    
 
     txt_sem_acesso["pppoe"] = f"PPPoE {cb_pppoe.get()}"
 
@@ -120,7 +129,7 @@ def sem_acesso():
     else:
         txt_sem_acesso["desc"] = "sem múltiplas desconexões"
 
-    situacao = f'{txt_sem_acesso["onu"]}, {txt_sem_acesso["port"]}, {txt_sem_acesso["alarm"]}. {txt_sem_acesso["pppoe"]}, {txt_sem_acesso["desc"]}. '
+    situacao = f'{txt_sem_acesso["onu"]}, {txt_sem_acesso["port"]}, {txt_sem_acesso["alarm"]} e {txt_sem_acesso["hist"]}. {txt_sem_acesso["pppoe"]}, {txt_sem_acesso["desc"]}. '
 
 def com_acesso():
     global txt_sem_acesso, situacao
@@ -131,6 +140,8 @@ def com_acesso():
     cb_port.grid_remove()
 
     cb_alarm.grid_remove()
+
+    cb_hist.grid_remove()
 
     lb_pppoe.grid_remove()
     cb_pppoe.grid_remove()
@@ -227,6 +238,15 @@ cb_desc.set(list_desc[1])
 cb_desc['values'] = list_desc
 cb_desc['state'] = 'readonly'
 cb_desc.bind("<<ComboboxSelected>>", selected)
+
+# COMBOBOX - HISTÓRICO DE SINAL  -----------------------------------------------------------------
+list_hist = ["HISTÓRICO NORMAL", "HISTÓRICO ALTERADO"]
+selected_hist = StringVar()
+cb_hist = ttk.Combobox(window, textvariable=selected_hist,)
+cb_hist.set(list_hist[0])
+cb_hist['values'] = list_hist
+cb_hist['state'] = 'readonly'
+cb_hist.bind("<<ComboboxSelected>>", selected)
 
 # RADIO BUTTONS - OS LIBERADA / RETIDA / CANCELADA -----------------------------------------------------------------
 var_end = IntVar()
