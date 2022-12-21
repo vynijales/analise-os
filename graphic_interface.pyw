@@ -99,6 +99,12 @@ def checar_problema():
     else:
         com_sinal()
 
+    if cb_problem.get() == "Sem sinal Total":
+        sinal_total()
+    else:
+        pass
+        #sinal_parcial()
+
     
 
 def sem_acesso():
@@ -203,7 +209,7 @@ def sem_sinal():
             sem_sinal()
     
     elif cb_tv.get() == list_tv[2]:
-        list_tv2 = ["LOGIN OK", "LOGIN FF"]
+        list_tv2 = ["LOGIN OK", "LOGIN OFF"]
         cb_tv2['values'] = list_tv2
 
         if cb_tv2.get() == list_tv2[0]:
@@ -221,6 +227,118 @@ def com_sinal():
     if cb_tv2.get() == "SINAL OFF":
         cb_port.grid_remove()
 
+def sinal_total():
+    global situacao, txt_sem_acesso
+    
+    lb_onu.grid(column=0, row=4, padx = 5, pady = 5)
+    cb_onu.grid(column=1, row=4, padx = 5, pady = 5)
+
+    cb_port.grid(column=2, row=4, padx = 5, pady = 5)
+
+    cb_alarm.grid(column=3, row=4,)
+
+    cb_hist.grid(column=4, row=4, padx = 5, pady = 5)
+
+    lb_pppoe.grid(column=0, row=5, padx = 5, pady = 5)
+    cb_pppoe.grid(column=1, row=5, padx = 5, pady = 5)
+    
+    cb_desc.grid(column=2, row=5, padx = 5, pady = 5)
+
+    lb_tv.grid(column=0, row=6, padx = 5, pady = 5)
+    cb_tv.grid(column=1, row=6, padx = 5, pady = 5)
+
+    cb_tv2.grid(column=2, row=6, padx = 5, pady = 5)
+
+    txt_sem_acesso["onu"] = f"ONU {cb_onu.get()}"
+
+    if cb_port.get() == list_port[0]:
+        txt_sem_acesso["port"] = "Porta normal"
+    else:
+        txt_sem_acesso["port"] = "Porta em verificação"
+    
+    if cb_alarm.get() == list_alarm[0]:
+        txt_sem_acesso["alarm"] = "com alarmes recorrentes de LOS/Energia"
+    else:
+        txt_sem_acesso["alarm"] = "sem alarmes de quedas recorrentes"
+
+    if cb_hist.get() == list_hist[0]:
+        txt_sem_acesso["hist"] = "histórico de sinal normal"
+    else:
+        txt_sem_acesso["hist"] = "com histórico de sinal alterado em -30.0 dBm"
+    
+
+    txt_sem_acesso["pppoe"] = f"PPPoE {cb_pppoe.get()}"
+
+    if cb_desc.get() == list_desc[0]:
+        txt_sem_acesso["desc"] = "com múltiplas desconexões"
+    else:
+        txt_sem_acesso["desc"] = "sem múltiplas desconexões"
+
+    situacao = f'{txt_sem_acesso["onu"]}, {txt_sem_acesso["port"]}, {txt_sem_acesso["alarm"]} e {txt_sem_acesso["hist"]}. {txt_sem_acesso["pppoe"]}, {txt_sem_acesso["desc"]}. '
+
+    #TV
+
+    if cb_tv.get() == list_tv[0]:
+        list_tv2 = ["ÁREA NORMAL", "ÁREA EM VERIFICAÇÃO"]
+        cb_tv2['values'] = list_tv2
+
+        if cb_tv2.get() == list_tv2[0]:
+            situacao += f"Cliente possui tecnologia COAXIAL, sem reclamações o suficiente para acionar a Equipe de Rede na Região."
+        elif cb_tv2.get() == list_tv2[1]:
+            situacao += f"Cliente possui tecnologia COAXIAL, identificado clientes com o mesmo problema na Região. Acionado a Equipe de Rede para verificar. "
+        else:
+            cb_tv2.set(list_tv2[0])
+            sinal_total()
+
+    elif cb_tv.get() == list_tv[1]:
+        list_tv2 = ["RX NORMAL", "RX ALTERADO", "SINAL OFF"]
+        cb_tv2['values'] = list_tv2
+        
+        if cb_tv2.get() == list_tv2[0]:
+            situacao += f"Cliente possui tecnologia FTTH, Sinal 1490 normal. "
+        elif cb_tv2.get() == list_tv2[1]:
+            situacao += f"Cliente possui tecnologia FTTH, Sinal 1490 alterado (-30.0 dBm). "
+        elif cb_tv2.get() == list_tv2[2]:
+            situacao += f"Cliente possui tecnologia FTTH, está sem sinal de Internet e TV"
+            if cb_port.get() == "PORTA EM VERIFICAÇÃO":
+                situacao += ", afetado em verificação. "
+            situacao += "."
+            
+        else:
+            cb_tv2.set(list_tv2[0])
+            sinal_total()
+    
+    elif cb_tv.get() == list_tv[2]:
+        list_tv2 = ["LOGIN OK", "LOGIN OFF"]
+        cb_tv2['values'] = list_tv2
+
+        if cb_tv2.get() == list_tv2[0]:
+            situacao += f"Cliente possui tecnologia TV BOX PREMIUM, testado login na Plataforma WEB, aparentemente normal. "
+        elif cb_tv2.get() == list_tv2[1]:
+            situacao += f"Cliente possui tecnologia TV BOX PREMIUM, testado login na Plataforma WEB, sem acesso. Situação encaminhada para o CQ. "
+        else:
+            cb_tv2.set(list_tv2[0])
+            sinal_total()
+
+
+"""def sinal_parcial():
+    lb_onu.grid_remove()
+    cb_onu.grid_remove()
+
+    cb_port.grid_remove()
+
+    cb_alarm.grid_remove()
+
+    cb_hist.grid_remove()
+
+    lb_pppoe.grid_remove()
+    cb_pppoe.grid_remove()
+
+    cb_desc.grid_remove()
+
+    lb_tv.grid_remove()
+    cb_tv.grid_remove()
+    cb_tv2.grid_remove()"""
 
 # JANELA PRINCIPAL ==========================================================================
 window = Tk()
@@ -253,7 +371,7 @@ text_obs.grid(column=0, row=2, columnspan=5)
 lb_problem = Label(window, text="PROBLEMA: ")
 lb_problem.grid(column=0, row=0, padx=0, pady=0)
 
-list_problem = ["","Sem sinal", "Sem acesso", "Lentidão"]
+list_problem = ["","Sem sinal", "Sem acesso", "Sem sinal Total", "Lentidão"]
 
 selected_problem = StringVar()
 cb_problem = ttk.Combobox(window, textvariable=selected_problem, width=15)
@@ -339,6 +457,10 @@ cb_tv2.set(list_tv2[0])
 cb_tv2['values'] = list_tv2
 cb_tv2['state'] = 'readonly'
 cb_tv2.bind("<<ComboboxSelected>>", selected)
+
+
+# SEM SINAL TOTAL ================================================================================================
+# RADIO BUTTONS - OS LIBERADA / RETIDA / CANCELADA -----------------------------------------------------------------
 
 
 # FIM DA OBSERVAÇÃO ================================================================================================
