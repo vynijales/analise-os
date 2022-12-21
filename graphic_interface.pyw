@@ -10,11 +10,11 @@ setor = "N2: "
 situacao = ""
 fim = ""
 
-txt_sem_acesso = {"txt_onu": "",
-"txt_port": "",
-"txt_alarm": "",
-"txt_pppoe": "",
-"txt_desc": "",
+txt_sem_acesso = {"onu": "",
+"port": "",
+"alarm": "",
+"pppoe": "",
+"desc": "",
 }
 
 list_user = ["ANAFREITAS", "EDUARDOBARRETO", "IGOR", "JOYCEJORDANIA", "MATHEUSVYNICIUS", "NAELSONGERMANO"]
@@ -101,28 +101,30 @@ def sem_acesso():
     cb_desc.grid(column=2, row=5, padx = 5, pady = 5)
 
 
-    txt_sem_acesso["txt_onu"] = f"ONU {cb_onu.get()}"
+    txt_sem_acesso["onu"] = f"ONU {cb_onu.get()}"
 
     if cb_port.get() == list_port[0]:
-        txt_sem_acesso["txt_port"] = "Porta normal"
+        txt_sem_acesso["port"] = "Porta normal"
     else:
-        txt_sem_acesso["txt_port"] = "Porta em verificação"
+        txt_sem_acesso["port"] = "Porta em verificação"
     
     if cb_alarm.get() == list_alarm[0]:
-        txt_sem_acesso["txt_alarm"] = "com alarmes recorrentes de LOS/Energia"
+        txt_sem_acesso["alarm"] = "com alarmes recorrentes de LOS/Energia"
     else:
-        txt_sem_acesso["txt_alarm"] = "sem alarmes recorrentes"
+        txt_sem_acesso["alarm"] = "sem alarmes recorrentes"
 
-    txt_sem_acesso["txt_pppoe"] = f"PPPoE {cb_pppoe.get()}"
+    txt_sem_acesso["pppoe"] = f"PPPoE {cb_pppoe.get()}"
 
     if cb_desc.get() == list_desc[0]:
-        txt_sem_acesso["txt_desc"] = "com múltiplas desconexões"
+        txt_sem_acesso["desc"] = "com múltiplas desconexões"
     else:
-        txt_sem_acesso["txt_desc"] = "sem múltiplas desconexões"
+        txt_sem_acesso["desc"] = "sem múltiplas desconexões"
 
-    situacao = f'{txt_sem_acesso["txt_onu"]}, {txt_sem_acesso["txt_port"]}, {txt_sem_acesso["txt_alarm"]}. {txt_sem_acesso["txt_pppoe"]}, {txt_sem_acesso["txt_desc"]}. '
+    situacao = f'{txt_sem_acesso["onu"]}, {txt_sem_acesso["port"]}, {txt_sem_acesso["alarm"]}. {txt_sem_acesso["pppoe"]}, {txt_sem_acesso["desc"]}. '
 
 def com_acesso():
+    global txt_sem_acesso, situacao
+
     lb_onu.grid_remove()
     cb_onu.grid_remove()
 
@@ -134,6 +136,9 @@ def com_acesso():
     cb_pppoe.grid_remove()
 
     cb_desc.grid_remove()
+
+    situacao = ""
+
 
 
 window = Tk()
