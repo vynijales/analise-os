@@ -18,6 +18,14 @@ txt_sem_acesso = {"onu": "",
 "hist": "",
 }
 
+txt_sem_sinal = {"area": "",
+"port": "",
+"alarm": "",
+"pppoe": "",
+"desc": "",
+"hist": "",
+}
+
 list_user = ["ANAFREITAS", "EDUARDOBARRETO", "IGOR", "JOYCEJORDANIA", "MATHEUSVYNICIUS", "NAELSONGERMANO"]
 
 
@@ -86,6 +94,13 @@ def checar_problema():
     else:
         com_acesso()
 
+    if cb_problem.get() == "Sem sinal":
+        sem_sinal()
+    else:
+        com_sinal()
+
+    
+
 def sem_acesso():
     global situacao, txt_sem_acesso
     
@@ -96,7 +111,6 @@ def sem_acesso():
 
     cb_alarm.grid(column=3, row=4,)
 
-    
     cb_hist.grid(column=4, row=4, padx = 5, pady = 5)
 
     lb_pppoe.grid(column=0, row=5, padx = 5, pady = 5)
@@ -150,13 +164,70 @@ def com_acesso():
 
     situacao = ""
 
+def sem_sinal():
+    global situacao, list_tv, list_tv2, selected_tv2
+
+    lb_tv.grid(column=0, row=4, padx = 5, pady = 5)
+    cb_tv.grid(column=1, row=4, padx = 5, pady = 5)
+
+    cb_tv2.grid(column=2, row=4, padx = 5, pady = 5)
+
+    if cb_tv.get() == list_tv[0]:
+        list_tv2 = ["ÁREA NORMAL", "ÁREA EM VERIFICAÇÃO"]
+        cb_tv2['values'] = list_tv2
+
+        if cb_tv2.get() == list_tv2[0]:
+            situacao = f"Cliente possui tecnologia COAXIAL, sem reclamações o suficiente para acionar a Equipe de Rede na Região."
+        elif cb_tv2.get() == list_tv2[1]:
+            situacao = f"Cliente possui tecnologia COAXIAL, identificado clientes com o mesmo problema na Região. Acionado a Equipe de Rede para verificar. "
+        else:
+            cb_tv2.set(list_tv2[0])
+            sem_sinal()
+
+    elif cb_tv.get() == list_tv[1]:
+        list_tv2 = ["RX NORMAL", "RX ALTERADO", "SINAL OFF"]
+        cb_tv2['values'] = list_tv2
+        
+        if cb_tv2.get() == list_tv2[0]:
+            situacao = f"Cliente possui tecnologia FTTH, Sinal 1490 normal. "
+        elif cb_tv2.get() == list_tv2[1]:
+            situacao = f"Cliente possui tecnologia FTTH, Sinal 1490 alterado (-30.0 dBm). "
+        elif cb_tv2.get() == list_tv2[2]:
+            situacao = f"Cliente possui tecnologia FTTH, está sem sinal de Internet e TV"
+            cb_port.grid(column=3, row=4, padx = 5, pady = 5)
+            if cb_port.get() == "PORTA EM VERIFICAÇÃO":
+                situacao += ", porta em verificação. "
+            situacao += "."
+        else:
+            cb_tv2.set(list_tv2[0])
+            sem_sinal()
+    
+    elif cb_tv.get() == list_tv[2]:
+        list_tv2 = ["LOGIN OK", "LOGIN FF"]
+        cb_tv2['values'] = list_tv2
+
+        if cb_tv2.get() == list_tv2[0]:
+            situacao = f"Cliente possui tecnologia TV BOX PREMIUM, testado login na Plataforma WEB, aparentemente normal. "
+        elif cb_tv2.get() == list_tv2[1]:
+            situacao = f"Cliente possui tecnologia TV BOX PREMIUM, testado login na Plataforma WEB, sem acesso. Situação encaminhada para o CQ. "
+        else:
+            cb_tv2.set(list_tv2[0])
+            sem_sinal()
+
+def com_sinal():
+    lb_tv.grid_remove()
+    cb_tv.grid_remove()
+    cb_tv2.grid_remove()
+    if cb_tv2.get() == "SINAL OFF":
+        cb_port.grid_remove()
 
 
+# JANELA PRINCIPAL ==========================================================================
 window = Tk()
-#window.geometry("400x400")
 
 window.title("Análise do N2")
 
+# OPÇÕES SUPERIORES ==========================================================================
 # LABEL AND COMBOBOX - USER -----------------------------------------------------------------
 
 lb_user = Label(window, text="USUÁRIO: ")
@@ -176,12 +247,13 @@ cb_user.bind("<<ComboboxSelected>>", selected)
 text_obs = Text(window, width = 55, height=10, wrap=WORD)
 text_obs.grid(column=0, row=2, columnspan=5)
 
+# SEM ACESSO A INTERNE =================================================================
 # COMBOBOX - PROBLEMA -----------------------------------------------------------------
 
 lb_problem = Label(window, text="PROBLEMA: ")
 lb_problem.grid(column=0, row=0, padx=0, pady=0)
 
-list_problem = ["","Sem sinal total", "Sem acesso", "Lentidão"]
+list_problem = ["","Sem sinal", "Sem acesso", "Lentidão"]
 
 selected_problem = StringVar()
 cb_problem = ttk.Combobox(window, textvariable=selected_problem, width=15)
@@ -239,7 +311,7 @@ cb_desc['values'] = list_desc
 cb_desc['state'] = 'readonly'
 cb_desc.bind("<<ComboboxSelected>>", selected)
 
-# COMBOBOX - HISTÓRICO DE SINAL  -----------------------------------------------------------------
+# COMBOBOX - HISTÓRICO DE SINAL  -----------------------------------------------------------------------------------
 list_hist = ["HISTÓRICO NORMAL", "HISTÓRICO ALTERADO"]
 selected_hist = StringVar()
 cb_hist = ttk.Combobox(window, textvariable=selected_hist,)
@@ -248,6 +320,28 @@ cb_hist['values'] = list_hist
 cb_hist['state'] = 'readonly'
 cb_hist.bind("<<ComboboxSelected>>", selected)
 
+# SEM SINAL --------------------------------------------------------------------------------------------------------
+# LB/COMBOBOX - TIPO de TV
+lb_tv = Label(window, text= "TECNOLOGIA: ")
+
+list_tv = ["COAXIAL", "TV-FIBRA", "BOX-PREMIUM"]
+selected_tv = StringVar()
+cb_tv = ttk.Combobox(window, textvariable=selected_tv,)
+cb_tv.set(list_tv[0])
+cb_tv['values'] = list_tv
+cb_tv['state'] = 'readonly'
+cb_tv.bind("<<ComboboxSelected>>", selected)
+
+list_tv2 = ["ÁREA NORMAL", "ÁREA EM VERIFICAÇÃO"]
+selected_tv2 = StringVar()
+cb_tv2 = ttk.Combobox(window, textvariable=selected_tv2,)
+cb_tv2.set(list_tv2[0])
+cb_tv2['values'] = list_tv2
+cb_tv2['state'] = 'readonly'
+cb_tv2.bind("<<ComboboxSelected>>", selected)
+
+
+# FIM DA OBSERVAÇÃO ================================================================================================
 # RADIO BUTTONS - OS LIBERADA / RETIDA / CANCELADA -----------------------------------------------------------------
 var_end = IntVar()
 
