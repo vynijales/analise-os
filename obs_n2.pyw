@@ -343,34 +343,38 @@ customtkinter.set_appearance_mode("light")  # Modes: system (default), light, da
 customtkinter.set_default_color_theme("green")  # Themes: blue (default), dark-blue, green
 
 window  = customtkinter.CTk()  # create CTk window like you do with the Tk window
-# window = Tk()
+
 
 window.title("Análise do N2")
+
+# widget.columnconfigure(0, 200)
+
+window.resizable(False, False)
 
 # OPÇÕES SUPERIORES ==========================================================================
 # LABEL AND COMBOBOX - USER -----------------------------------------------------------------
 
-lb_user = customtkinter.CTkLabel(window, text="USUÁRIO: ")
-lb_user.grid(column=2, row=0, padx=0, pady=10)
+lb_user = customtkinter.CTkLabel(window, text="USUÁRIO: ",)
+lb_user.grid(column=3, row=0, padx=0, pady=10, sticky=E,)
 
 
-cb_user = customtkinter.CTkComboBox(window, width=180, values = list_user, state='readonly', command=atualizar,)
+cb_user = customtkinter.CTkComboBox(window, width=157, values = list_user, state='readonly', command=atualizar)
 cb_user.set(list_user[7])
-cb_user.grid(column=3,row=0, padx = 0, pady=0)
+cb_user.grid(column=4,row=0, padx = 0, pady=0, sticky=W)
 
 # cb_user.bind("<<ComboboxSelected>>", selected)
 
 
 # TEXTO PRINCIPAL -----------------------------------------------------------------
 # text_obs = Text(window, width = 55, height=10, wrap=WORD)
-text_obs = customtkinter.CTkTextbox(window, width=450, height=300, wrap=WORD, font=customtkinter.CTkFont(size=14,))
+text_obs = customtkinter.CTkTextbox(window, width=750, height=300, wrap=WORD, font=customtkinter.CTkFont(size=14,))
 text_obs.grid(column=0, row=2, columnspan=5)
 
 # SEM ACESSO A INTERNE =================================================================
 # COMBOBOX - PROBLEMA -----------------------------------------------------------------
 
 lb_problem = customtkinter.CTkLabel(window, text="PROBLEMA: ", )
-lb_problem.grid(column=0, row=0, padx=0, pady=0)
+lb_problem.grid(column=0, row=0, padx=0, pady=0, sticky=E)
 
 list_problem = ["Sem sinal", "Sem acesso", "Sem sinal Total", "Lentidão"]
 
@@ -441,7 +445,7 @@ rb_cancelada = customtkinter.CTkRadioButton(window, text = "OS cancelada", varia
 rb_cancelada.grid(column=2, row=8, padx = 5, pady = 5)
 
 # BUTTON CLEAR -----------------------------------------------------------------
-bt_clear = customtkinter.CTkButton(master=window, text="Limpar", command=clear, fg_color="red", hover_color="green")
+bt_clear = customtkinter.CTkButton(master=window, text="Limpar", command=clear, fg_color="red", hover_color="#d94545")
 bt_clear.grid(column=3, row=8, padx=10, pady=10)
 
 #bt_clear = Button(window, text="Limpar", command=clear)
