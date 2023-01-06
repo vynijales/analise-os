@@ -78,9 +78,6 @@ def clear():
 def ctrlc():
     text = text_obs.get("1.0","end-1c")
     pc.copy(text)
-    cb_problem.set("")
-    
-    atualizar(True)
 
 def liberada():
     global fim
@@ -294,6 +291,7 @@ def sinal_total():
     if cb_tv.get() == list_tv[0]:
         list_tv2 = ["ÁREA NORMAL", "ÁREA EM VERIFICAÇÃO"]
         cb_tv2['values'] = list_tv2
+        cb_tv2.configure(values=list_tv2)
 
         if cb_tv2.get() == list_tv2[0]:
             situacao += f"Cliente possui tecnologia COAXIAL, sem reclamações o suficiente para acionar a Equipe de Rede na Região."
@@ -306,6 +304,7 @@ def sinal_total():
     elif cb_tv.get() == list_tv[1]:
         list_tv2 = ["RX NORMAL", "RX ALTERADO", "SINAL OFF"]
         cb_tv2['values'] = list_tv2
+        cb_tv2.configure(values=list_tv2)
         
         if cb_tv2.get() == list_tv2[0]:
             situacao += f"Cliente possui tecnologia FTTH, Sinal 1490 normal. "
@@ -319,6 +318,7 @@ def sinal_total():
             
         else:
             cb_tv2.set(list_tv2[0])
+            cb_tv2.configure(values=list_tv2)
             sinal_total()
     
     elif cb_tv.get() == list_tv[2]:
@@ -380,7 +380,7 @@ text_obs.grid(column=0, row=2, columnspan=5, sticky=W,)
 lb_problem = customtkinter.CTkLabel(window, text="PROBLEMA: ", )
 lb_problem.grid(column=0, row=0, padx=0, pady=0, sticky=E)
 
-list_problem = ["Sem sinal", "Sem acesso", "Sem sinal Total", "Lentidão"]
+list_problem = ["", "Sem sinal", "Sem acesso", "Sem sinal Total", "Lentidão"]
 
 cb_problem = customtkinter.CTkComboBox(window, values = list_problem, state='readonly', command=atualizar)
 cb_problem.grid(column=1,row=0, padx=0, pady=0,)
