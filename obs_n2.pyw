@@ -97,17 +97,17 @@ def cancelada():
     
 
 def checar_problema():
-    if cb_problem.get() == "Sem acesso":
+    if cb_problem.get() == "INTERNET":
         sem_acesso()
     else:
         com_acesso()
 
-    if cb_problem.get() == "Sem sinal":
+    if cb_problem.get() == "TV":
         sem_sinal()
     else:
         com_sinal()
 
-    if cb_problem.get() == "Sem sinal Total":
+    if cb_problem.get() == "TV e INTERNET":
         sinal_total()
     else:
         pass
@@ -395,7 +395,7 @@ text_obs.grid(column=0, row=2, columnspan=5, sticky=W,)
 lb_problem = customtkinter.CTkLabel(window, text="PROBLEMA: ", )
 lb_problem.grid(column=0, row=0, padx=0, pady=0, sticky=E)
 
-list_problem = ["", "Sem sinal", "Sem acesso", "Sem sinal Total", "Lentidão"]
+list_problem = ["", "TV", "INTERNET", "TV e INTERNET",]
 
 cb_problem = customtkinter.CTkComboBox(window, values = list_problem, state='readonly', command=atualizar)
 cb_problem.grid(column=1,row=0, padx=0, pady=0,)
