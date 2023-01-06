@@ -17,6 +17,7 @@ txt_sem_acesso = {"onu": "",
 "pppoe": "",
 "desc": "",
 "hist": "",
+"lent": "",
 }
 
 txt_sem_sinal = {"area": "",
@@ -66,7 +67,7 @@ def clear():
     situacao = ""
     fim = ""
 
-    cb_user.set('')
+    # cb_user.set('')
 
     rb_liberada.Checkbutton = False
     rb_retida.Checkbutton = False
@@ -111,8 +112,6 @@ def checar_problema():
     else:
         pass
     
-    if cb_problem.get() == "Lentidão":
-        lentidao()
 
 def sem_acesso():
     global situacao, txt_sem_acesso
@@ -130,6 +129,8 @@ def sem_acesso():
     cb_pppoe.grid(column=1, row=5, padx = 5, pady = 5)
     
     cb_desc.grid(column=2, row=5, padx = 5, pady = 5)
+
+    sw_lentidao.grid(column=4, row=5, padx = 5, pady = 5)
 
     txt_sem_acesso["onu"] = f"ONU {cb_onu.get()}"
 
@@ -156,7 +157,14 @@ def sem_acesso():
     else:
         txt_sem_acesso["desc"] = "sem múltiplas desconexões"
 
-    situacao = f'{txt_sem_acesso["onu"]}, {txt_sem_acesso["port"]}, {txt_sem_acesso["alarm"]} e {txt_sem_acesso["hist"]}. {txt_sem_acesso["pppoe"]}, {txt_sem_acesso["desc"]}. '
+    if sw_lentidao.get():
+        txt_sem_acesso['lent'] = f"Checado VLAN, GATEWAY e IP. Velocidade liberada no CMTS e ONU cadastrada com Port Rate /1000. "
+        
+    else:
+        txt_sem_acesso['lent'] = ""
+        # sw_lentidao.configure(state="disabled")
+
+    situacao = f'{txt_sem_acesso["onu"]}, {txt_sem_acesso["port"]}, {txt_sem_acesso["alarm"]} e {txt_sem_acesso["hist"]}. {txt_sem_acesso["pppoe"]}, {txt_sem_acesso["desc"]}. {txt_sem_acesso["lent"]}'
 
 def com_acesso():
     global txt_sem_acesso, situacao
@@ -174,6 +182,8 @@ def com_acesso():
     cb_pppoe.grid_remove()
 
     cb_desc.grid_remove()
+    
+    sw_lentidao.grid_remove()
 
     situacao = ""
 
@@ -259,6 +269,8 @@ def sinal_total():
 
     cb_tv2.grid(column=2, row=6, padx = 5, pady = 5)
 
+    sw_lentidao.grid(column=4, row=5, padx = 5, pady = 5)
+
     txt_sem_acesso["onu"] = f"ONU {cb_onu.get()}"
 
     if cb_port.get() == list_port[0]:
@@ -284,7 +296,12 @@ def sinal_total():
     else:
         txt_sem_acesso["desc"] = "sem múltiplas desconexões"
 
-    situacao = f'{txt_sem_acesso["onu"]}, {txt_sem_acesso["port"]}, {txt_sem_acesso["alarm"]} e {txt_sem_acesso["hist"]}. {txt_sem_acesso["pppoe"]}, {txt_sem_acesso["desc"]}. '
+    if sw_lentidao.get():
+        txt_sem_acesso['lent'] = f"Checado VLAN, GATEWAY e IP. Velocidade liberada no CMTS e ONU cadastrada com Port Rate /1000. "
+    else:
+        txt_sem_acesso['lent'] = ''
+
+    situacao = f'{txt_sem_acesso["onu"]}, {txt_sem_acesso["port"]}, {txt_sem_acesso["alarm"]} e {txt_sem_acesso["hist"]}. {txt_sem_acesso["pppoe"]}, {txt_sem_acesso["desc"]}. {txt_sem_acesso["lent"]} '
 
     #TV
 
@@ -333,9 +350,7 @@ def sinal_total():
             cb_tv2.set(list_tv2[0])
             sinal_total()
 
-def lentidao():
-    global situacao
-    situacao = f"Checado VLAN, GATEWAY e IP. Velocidade liberada no CMTS e ONU cadastrada com Port Rate /1000. "
+
 
 # JANELA PRINCIPAL ==========================================================================
 
@@ -434,6 +449,8 @@ cb_tv2.set(list_tv2[0])
 
 # LENTIDÃO ================================================================================================
 # LB/COMBOBOX - OS LIBERADA / RETIDA / CANCELADA -----------------------------------------------------------------
+
+sw_lentidao = customtkinter.CTkSwitch(master=window, command=lambda: atualizar(True), text="LENTIDÃO", state='disable')
 
 # FIM DA OBSERVAÇÃO ================================================================================================
 # RADIO BUTTONS - OS LIBERADA / RETIDA / CANCELADA -----------------------------------------------------------------
