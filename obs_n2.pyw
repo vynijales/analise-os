@@ -73,12 +73,14 @@ def clear():
     rb_cancelada.Checkbutton = False
     cb_problem.set("")
 
-
     atualizar(True)
 
 def ctrlc():
     text = text_obs.get("1.0","end-1c")
     pc.copy(text)
+    cb_problem.set("")
+    
+    atualizar(True)
 
 def liberada():
     global fim
@@ -111,8 +113,7 @@ def checar_problema():
         sinal_total()
     else:
         pass
-        #sinal_parcial()
-
+    
     if cb_problem.get() == "Lentidão":
         lentidao()
 
@@ -190,9 +191,10 @@ def sem_sinal():
     if cb_tv.get() == list_tv[0]:
         list_tv2 = ["ÁREA NORMAL", "ÁREA EM VERIFICAÇÃO"]
         cb_tv2['values'] = list_tv2
+        cb_tv2.configure(values=list_tv2)
 
         if cb_tv2.get() == list_tv2[0]:
-            situacao = f"Cliente possui tecnologia COAXIAL, sem reclamações o suficiente para acionar a Equipe de Rede na Região."
+            situacao = f"Cliente possui tecnologia COAXIAL, sem reclamações o suficiente para acionar a Equipe de Rede na Região. "
         elif cb_tv2.get() == list_tv2[1]:
             situacao = f"Cliente possui tecnologia COAXIAL, identificado clientes com o mesmo problema na Região. Acionado a Equipe de Rede para verificar. "
         else:
@@ -202,13 +204,14 @@ def sem_sinal():
     elif cb_tv.get() == list_tv[1]:
         list_tv2 = ["RX NORMAL", "RX ALTERADO", "SINAL OFF"]
         cb_tv2['values'] = list_tv2
-        
+        cb_tv2.configure(values=list_tv2)
+
         if cb_tv2.get() == list_tv2[0]:
-            situacao = f"Cliente possui tecnologia FTTH, Sinal 1490 normal. "
+            situacao = f"Cliente possui tecnologia TV-FIBRA, Sinal 1490 normal. "
         elif cb_tv2.get() == list_tv2[1]:
-            situacao = f"Cliente possui tecnologia FTTH, Sinal 1490 alterado (-30.0 dBm). "
+            situacao = f"Cliente possui tecnologia TV-FIBRA, Sinal 1490 alterado (-30.0 dBm). "
         elif cb_tv2.get() == list_tv2[2]:
-            situacao = f"Cliente possui tecnologia FTTH, está sem sinal de Internet e TV"
+            situacao = f"Cliente possui tecnologia TV-FIBRA, está sem sinal de Internet e TV"
             cb_port.grid(column=3, row=4, padx = 5, pady = 5)
             if cb_port.get() == "PORTA EM VERIFICAÇÃO":
                 situacao += ", porta em verificação. "
@@ -220,6 +223,7 @@ def sem_sinal():
     elif cb_tv.get() == list_tv[2]:
         list_tv2 = ["LOGIN OK", "LOGIN OFF"]
         cb_tv2['values'] = list_tv2
+        cb_tv2.configure(values=list_tv2)
 
         if cb_tv2.get() == list_tv2[0]:
             situacao = f"Cliente possui tecnologia TV BOX PREMIUM, testado login na Plataforma WEB, aparentemente normal. "
@@ -331,7 +335,7 @@ def sinal_total():
 
 def lentidao():
     global situacao
-    situacao = f"Checado VLAN, GATEWAY, e IP. Velocidade liberada no CMTS, ONU cadastrada com Port Rate /1000. "
+    situacao = f"Checado VLAN, GATEWAY e IP. Velocidade liberada no CMTS e ONU cadastrada com Port Rate /1000. "
 
 # JANELA PRINCIPAL ==========================================================================
 
@@ -351,7 +355,7 @@ window.title("Análise do N2")
 
 window.resizable(False, False)
 
-# OPÇÕES SUPERIORES ==========================================================================
+# OPÇÕES SUPERIORES ==========================================================================cb_user
 # LABEL AND COMBOBOX - USER -----------------------------------------------------------------
 
 lb_user = customtkinter.CTkLabel(window, text="USUÁRIO: ",)
@@ -368,7 +372,7 @@ cb_user.grid(column=4,row=0, padx = 0, pady=0, sticky=W)
 # TEXTO PRINCIPAL -----------------------------------------------------------------
 # text_obs = Text(window, width = 55, height=10, wrap=WORD)
 text_obs = customtkinter.CTkTextbox(window, width=750, height=300, wrap=WORD, font=customtkinter.CTkFont(size=14,))
-text_obs.grid(column=0, row=2, columnspan=5)
+text_obs.grid(column=0, row=2, columnspan=5, sticky=W,)
 
 # SEM ACESSO A INTERNE =================================================================
 # COMBOBOX - PROBLEMA -----------------------------------------------------------------
