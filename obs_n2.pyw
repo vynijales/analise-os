@@ -3,24 +3,9 @@ from tkinter import ttk
 import customtkinter
 import pyperclip as pc
 import datetime
-import json
+
 from calendar import month_name
-
-with open("db.json",'r') as json_file:
-    dados = json.load(json_file)
-
-print(dados) 
-
-class OBS_N2():
-    def __init__(self) -> None:
-        super().__init__()
-        self.setor = 'N2'
-        self.obs = ''
-        self.situacao = ''
-        self.fim = ''
     
-    
-
 obs = ""
 setor = "N2: "
 situacao = ""
@@ -43,7 +28,19 @@ txt_sem_sinal = {"area": "",
 "hist": "",
 }
 
-list_user = dados['USERS']
+list_user = [
+"ANABARBOSA",
+"ANACLARA",
+"BRUNOBANDEIRA",
+"EDUARDOBARRETO",
+"ERICKENRIQUE",
+"IGOR",
+"JOYCEJORDANIA",
+"MATHEUSVYNICIUS",
+"MIKAEL",
+"NAELSON",
+"WALKDERLYPEREIRA"
+]
 
 
 def atualizar(variable):
@@ -119,15 +116,12 @@ def checar_problema():
 def sem_acesso():
     global situacao, txt_sem_acesso
     
-    frame_onu.grid(column=0, row=4, padx=10, pady=5, columnspan=4, sticky="nswe")
-    frame_pppoe.grid(column=0, row=5, padx=10, pady=5, columnspan=2, sticky="nswe")
-
     lb_onu.grid(column=0, row=4, padx = 5, pady = 5)
     cb_onu.grid(column=1, row=4, padx = 5, pady = 5)
 
     cb_port.grid(column=2, row=4, padx = 5, pady = 5)
 
-    cb_alarm.grid(column=3, row=4,  padx = 5, pady = 5)
+    cb_alarm.grid(column=3, row=4,)
 
     cb_hist.grid(column=4, row=4, padx = 5, pady = 5)
 
@@ -138,45 +132,42 @@ def sem_acesso():
 
     sw_lentidao.grid(column=4, row=5, padx = 5, pady = 5)
 
-    txt_sem_acesso["ONU"] = f"ONU {cb_onu.get()}"
+    txt_sem_acesso["onu"] = f"ONU {cb_onu.get()}"
 
     if cb_port.get() == list_port[0]:
-        txt_sem_acesso["PORT"] = "Porta normal"
+        txt_sem_acesso["port"] = "Porta normal"
     else:
-        txt_sem_acesso["PORT"] = "Porta em verificação"
+        txt_sem_acesso["port"] = "Porta em verificação"
     
     if cb_alarm.get() == list_alarm[0]:
-        txt_sem_acesso["ALARM"] = "com alarmes recorrentes de LOS/Energia"
+        txt_sem_acesso["alarm"] = "com alarmes recorrentes de LOS/Energia"
     else:
-        txt_sem_acesso["ALARM"] = "sem alarmes de quedas recorrentes"
+        txt_sem_acesso["alarm"] = "sem alarmes de quedas recorrentes"
 
     if cb_hist.get() == list_hist[0]:
-        txt_sem_acesso["HIST"] = "histórico de sinal normal"
+        txt_sem_acesso["hist"] = "histórico de sinal normal"
     else:
-        txt_sem_acesso["HIST"] = "com histórico de sinal alterado em -30.0 dBm"
+        txt_sem_acesso["hist"] = "com histórico de sinal alterado em -30.0 dBm"
     
 
-    txt_sem_acesso["PPPOE"] = f"PPPoE {cb_pppoe.get()}"
+    txt_sem_acesso["pppoe"] = f"PPPoE {cb_pppoe.get()}"
 
     if cb_desc.get() == list_desc[0]:
-        txt_sem_acesso["DESC"] = "com múltiplas desconexões"
+        txt_sem_acesso["desc"] = "com múltiplas desconexões"
     else:
-        txt_sem_acesso["DESC"] = "sem múltiplas desconexões"
+        txt_sem_acesso["desc"] = "sem múltiplas desconexões"
 
     if sw_lentidao.get():
-        txt_sem_acesso['LENT'] = f"Checado VLAN, GATEWAY e IP. Velocidade liberada no CMTS e ONU cadastrada com Port Rate /1000. "
+        txt_sem_acesso['lent'] = f"Checado VLAN, GATEWAY e IP. Velocidade liberada no CMTS e ONU cadastrada com Port Rate /1000. "
         
     else:
-        txt_sem_acesso['LENT'] = ""
+        txt_sem_acesso['lent'] = ""
         # sw_lentidao.configure(state="disabled")
 
-    situacao = f'{txt_sem_acesso["ONU"]}, {txt_sem_acesso["PORT"]}, {txt_sem_acesso["ALARM"]} e {txt_sem_acesso["HIST"]}. {txt_sem_acesso["PPPOE"]}, {txt_sem_acesso["DESC"]}. {txt_sem_acesso["LENT"]}'
+    situacao = f'{txt_sem_acesso["onu"]}, {txt_sem_acesso["port"]}, {txt_sem_acesso["alarm"]} e {txt_sem_acesso["hist"]}. {txt_sem_acesso["pppoe"]}, {txt_sem_acesso["desc"]}. {txt_sem_acesso["lent"]}'
 
 def com_acesso():
     global txt_sem_acesso, situacao
-
-    frame_onu.grid_remove()
-    frame_pppoe.grid_remove()
 
     lb_onu.grid_remove()
     cb_onu.grid_remove()
@@ -198,8 +189,6 @@ def com_acesso():
 
 def sem_sinal():
     global situacao, list_tv, list_tv2, selected_tv2
-
-    frame_tv.grid(column=0, row=6, padx = 5, pady = 5, columnspan=5)
 
     lb_tv.grid(column=0, row=4, padx = 5, pady = 5)
     cb_tv.grid(column=1, row=4, padx = 5, pady = 5)
@@ -282,37 +271,37 @@ def sinal_total():
 
     sw_lentidao.grid(column=4, row=5, padx = 5, pady = 5)
 
-    txt_sem_acesso["ONU"] = f"ONU {cb_onu.get()}"
+    txt_sem_acesso["onu"] = f"ONU {cb_onu.get()}"
 
     if cb_port.get() == list_port[0]:
-        txt_sem_acesso["PORT"] = "Porta normal"
+        txt_sem_acesso["port"] = "Porta normal"
     else:
-        txt_sem_acesso["PORT"] = "Porta em verificação"
+        txt_sem_acesso["port"] = "Porta em verificação"
     
     if cb_alarm.get() == list_alarm[0]:
-        txt_sem_acesso["ALARM"] = "com alarmes recorrentes de LOS/Energia"
+        txt_sem_acesso["alarm"] = "com alarmes recorrentes de LOS/Energia"
     else:
-        txt_sem_acesso["ALARM"] = "sem alarmes de quedas recorrentes"
+        txt_sem_acesso["alarm"] = "sem alarmes de quedas recorrentes"
 
     if cb_hist.get() == list_hist[0]:
-        txt_sem_acesso["HIST"] = "histórico de sinal normal"
+        txt_sem_acesso["hist"] = "histórico de sinal normal"
     else:
-        txt_sem_acesso["HIST"] = "com histórico de sinal alterado em -30.0 dBm"
+        txt_sem_acesso["hist"] = "com histórico de sinal alterado em -30.0 dBm"
     
 
-    txt_sem_acesso["PPPOE"] = f"PPPoE {cb_pppoe.get()}"
+    txt_sem_acesso["pppoe"] = f"PPPoE {cb_pppoe.get()}"
 
     if cb_desc.get() == list_desc[0]:
-        txt_sem_acesso["DESC"] = "com múltiplas desconexões"
+        txt_sem_acesso["desc"] = "com múltiplas desconexões"
     else:
-        txt_sem_acesso["DESC"] = "sem múltiplas desconexões"
+        txt_sem_acesso["desc"] = "sem múltiplas desconexões"
 
     if sw_lentidao.get():
-        txt_sem_acesso['LENT'] = f"Checado VLAN, GATEWAY e IP. Velocidade liberada no CMTS e ONU cadastrada com Port Rate /1000. "
+        txt_sem_acesso['lent'] = f"Checado VLAN, GATEWAY e IP. Velocidade liberada no CMTS e ONU cadastrada com Port Rate /1000. "
     else:
-        txt_sem_acesso['LENT'] = ''
+        txt_sem_acesso['lent'] = ''
 
-    situacao = f'{txt_sem_acesso["ONU"]}, {txt_sem_acesso["PORT"]}, {txt_sem_acesso["ALARM"]} e {txt_sem_acesso["HIST"]}. {txt_sem_acesso["PPPOE"]}, {txt_sem_acesso["DESC"]}. {txt_sem_acesso["LENT"]} '
+    situacao = f'{txt_sem_acesso["onu"]}, {txt_sem_acesso["port"]}, {txt_sem_acesso["alarm"]} e {txt_sem_acesso["hist"]}. {txt_sem_acesso["pppoe"]}, {txt_sem_acesso["desc"]}. {txt_sem_acesso["lent"]} '
 
     #TV
 
@@ -381,22 +370,14 @@ window.title("Análise do N2")
 
 window.resizable(False, False)
 
-# FRAMES
-frame_head = LabelFrame(window, text='INICIO DA ANÁLISE', padx=5, pady=5)
-frame_onu = LabelFrame(window, text='ONU', padx=5, pady=5)
-frame_pppoe = LabelFrame(window, text='PPPOE', padx=5, pady=5)
-frame_tv = LabelFrame(window, text='PPPOE', padx=5, pady=5)
-frame_end = LabelFrame(window, text='FIM DA ANÁLISE', padx=5, pady=5)
-
-
 # OPÇÕES SUPERIORES ==========================================================================cb_user
 # LABEL AND COMBOBOX - USER -----------------------------------------------------------------
-frame_head.grid(column=0, row=0, padx=10, pady=5, columnspan=5, sticky="nswe")
-lb_user = customtkinter.CTkLabel(frame_head, text="USUÁRIO: ",)
-lb_user.grid(column=3, row=0, padx=0, pady=10, sticky=E)
+
+lb_user = customtkinter.CTkLabel(window, text="USUÁRIO: ",)
+lb_user.grid(column=3, row=0, padx=0, pady=10, sticky=E,)
 
 
-cb_user = customtkinter.CTkComboBox(frame_head, width=157, values = list_user, state='readonly', command=atualizar)
+cb_user = customtkinter.CTkComboBox(window, width=157, values = list_user, state='readonly', command=atualizar)
 cb_user.set(list_user[7])
 cb_user.grid(column=4,row=0, padx = 0, pady=0, sticky=W)
 
@@ -411,47 +392,47 @@ text_obs.grid(column=0, row=2, columnspan=5, sticky=W,)
 # SEM ACESSO A INTERNE =================================================================
 # COMBOBOX - PROBLEMA -----------------------------------------------------------------
 
-lb_problem = customtkinter.CTkLabel(frame_head, text="PROBLEMA: ", )
-lb_problem.grid(column=0, row=0, padx=0, pady=0, sticky=W)
+lb_problem = customtkinter.CTkLabel(window, text="PROBLEMA: ", )
+lb_problem.grid(column=0, row=0, padx=0, pady=0, sticky=E)
 
 list_problem = ["", "TV", "INTERNET", "TV e INTERNET",]
 
-cb_problem = customtkinter.CTkComboBox(frame_head, values = list_problem, state='readonly', command=atualizar)
+cb_problem = customtkinter.CTkComboBox(window, values = list_problem, state='readonly', command=atualizar)
 cb_problem.grid(column=1,row=0, padx=0, pady=0,)
 
 # LABEL/COMBOBOX - ONU -----------------------------------------------------------------
-lb_onu = customtkinter.CTkLabel(frame_onu, text="ONU: ")
+lb_onu = customtkinter.CTkLabel(window, text="ONU: ")
 list_onu = ["ONLINE", "OFFLINE (LOS)", "OFFLINE (ENERGIA)"]
 
 # selected_onu = StringVar()
-cb_onu = customtkinter.CTkComboBox(frame_onu, values = list_onu, state='readonly', command=atualizar)
+cb_onu = customtkinter.CTkComboBox(window, values = list_onu, state='readonly', command=atualizar)
 cb_onu.set(list_onu[0])
 
 # LABEL/COMBOBOX - PORTA -----------------------------------------------------------------
 list_port = ["PORTA NORMAL", "PORTA EM VERIFICAÇÃO"]
-cb_port = customtkinter.CTkComboBox(frame_onu, values = list_port, state='readonly', command=atualizar)
+cb_port = customtkinter.CTkComboBox(window, values = list_port, state='readonly', command=atualizar)
 cb_port.set(list_port[0])
 
 # customtkinter.CTkLabel/COMBOBOX - ALARMES -----------------------------------------------------------------
 list_alarm = ["C/ ALARMES", "S/ ALARMES"]
-cb_alarm = customtkinter.CTkComboBox(frame_onu, values = list_alarm, state='readonly', command=atualizar)
+cb_alarm = customtkinter.CTkComboBox(window, values = list_alarm, state='readonly', command=atualizar)
 cb_alarm.set(list_alarm[1])
 
 # LABEL/COMBOBOX - PPPOE -----------------------------------------------------------------
-lb_pppoe = customtkinter.CTkLabel(frame_pppoe, text="PPPOE: ")
+lb_pppoe = customtkinter.CTkLabel(window, text="PPPOE: ")
 list_pppoe = ["CONECTADO", "DESCONECTADO"]
 
-cb_pppoe = customtkinter.CTkComboBox(frame_pppoe, values = list_pppoe, state='readonly', command=atualizar)
+cb_pppoe = customtkinter.CTkComboBox(window, values = list_pppoe, state='readonly', command=atualizar)
 cb_pppoe.set(list_pppoe[0])
 
 # COMBOBOX - DESCONEXÕES -----------------------------------------------------------------
 list_desc = ["C/ DESCONEXÕES", "S/ DESCONEXÕES"]
-cb_desc = customtkinter.CTkComboBox(frame_pppoe, values = list_desc, state='readonly', command=atualizar)
+cb_desc = customtkinter.CTkComboBox(window, values = list_desc, state='readonly', command=atualizar)
 cb_desc.set(list_desc[1])
 
 # COMBOBOX - HISTÓRICO DE SINAL  -----------------------------------------------------------------------------------
 list_hist = ["HISTÓRICO NORMAL", "HISTÓRICO ALTERADO"]
-cb_hist = customtkinter.CTkComboBox(frame_onu, values = list_hist, state='readonly', command=atualizar)
+cb_hist = customtkinter.CTkComboBox(window, values = list_hist, state='readonly', command=atualizar)
 cb_hist.set(list_hist[0])
 
 # SEM SINAL --------------------------------------------------------------------------------------------------------
@@ -473,22 +454,19 @@ sw_lentidao = customtkinter.CTkSwitch(master=window, command=lambda: atualizar(T
 
 # FIM DA OBSERVAÇÃO ================================================================================================
 # RADIO BUTTONS - OS LIBERADA / RETIDA / CANCELADA -----------------------------------------------------------------
-
-frame_end.grid(column=0, row=8, padx=10, pady=5, columnspan=5, sticky="nswe")
-
 var_end = IntVar()
 
-rb_retida = customtkinter.CTkRadioButton(frame_end, text = "OS retida", variable = var_end, value = 1, command=retida)
+rb_retida = customtkinter.CTkRadioButton(window, text = "OS retida", variable = var_end, value = 1, command=retida)
 rb_retida.grid(column=0, row=8, padx = 5, pady = 5)
  
-rb_liberada = customtkinter.CTkRadioButton(frame_end, text = "OS liberada", variable = var_end, value = 2, command=liberada)
+rb_liberada = customtkinter.CTkRadioButton(window, text = "OS liberada", variable = var_end, value = 2, command=liberada)
 rb_liberada.grid(column=1, row=8, padx = 5, pady = 5)
 
-rb_cancelada = customtkinter.CTkRadioButton(frame_end, text = "OS cancelada", variable = var_end, value = 3, command=cancelada)
+rb_cancelada = customtkinter.CTkRadioButton(window, text = "OS cancelada", variable = var_end, value = 3, command=cancelada)
 rb_cancelada.grid(column=2, row=8, padx = 5, pady = 5)
 
 # BUTTON CLEAR -----------------------------------------------------------------
-bt_clear = customtkinter.CTkButton(master=frame_end, text="Limpar", command=clear, fg_color="red", hover_color="#d94545")
+bt_clear = customtkinter.CTkButton(master=window, text="Limpar", command=clear, fg_color="red", hover_color="#d94545")
 bt_clear.grid(column=3, row=8, padx=10, pady=10)
 
 #bt_clear = Button(window, text="Limpar", command=clear)
@@ -496,7 +474,7 @@ bt_clear.grid(column=3, row=8, padx=10, pady=10)
 
 # BUTTON COPY -----------------------------------------------------------------
 
-bt_copy = customtkinter.CTkButton(master=frame_end, text="Copiar", command=ctrlc)
+bt_copy = customtkinter.CTkButton(master=window, text="Copiar", command=ctrlc)
 bt_copy.grid(column=4, row=8, padx=10, pady=10)
 
 # bt_copy = Button(window, text="Copiar", command=ctrlc)
