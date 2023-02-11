@@ -20,6 +20,7 @@ DADOS = {
     "WALKDERLYPEREIRA",
     "PEDROWENISTON"
   ],
+  "PROBLEMAS" : ["", "TV", "INTERNET", "TV e INTERNET"],
   "INTERNET" : {
             "STATUS": {
                 "ONLINE": "ONU ONLINE.",
@@ -38,7 +39,7 @@ DADOS = {
                 "HISTÓRICO NORMAL": "Sinal 1490 normal no histórico.",
                 "HISTÓRICO ALTERADO": "Sinal 1490 alterado em -30.0 dBm no histórico."
             },
-            "PPPoE": {
+            "PPPOE": {
                 "CONECTADO": "PPPoE conectado,",
                 "DESCONECTADO": "PPPoE desconectado,"
             },
@@ -75,8 +76,8 @@ DADOS = {
 }
 
 def atualizar(variable):
-    text_obs.delete("1.0", "end")
-    text_obs.insert(END, f'{DADOS["SETOR"] + getInternet() + getTV() + DADOS["OBSERVACAO"]["FINALIZACAO"]}\n\n{cb_user.get()}{rodape()}')
+    textObservacao.delete("1.0", "end")
+    textObservacao.insert(END, f'{DADOS["SETOR"] + getInternet() + getTV() + DADOS["OBSERVACAO"]["FINALIZACAO"]}\n\n{cbUser.get()}{rodape()}')
 
 def rodape():
     today = datetime.datetime.now()
@@ -84,158 +85,161 @@ def rodape():
     return f" - {td}\n"+("-"*51)
 
 def clear():
-    cb_problem.set("")
+    cbProblema.set("")
     atualizar(True)
 
 def ctrlc():
-    pc.copy(text_obs.get("1.0","end-1c"))
+    pc.copy(textObservacao.get("1.0","end-1c"))
 
 def liberada():
-    DADOS["OBSERVACAO"]["FINALIZACAO"] = "OS liberada e encaminhada para a equipe de assistência."
+    DADOS["OBSERVACAO"]["FINALIZACAO"] = " OS liberada e encaminhada para a equipe de assistência."
     atualizar(True)
 
 def retida():
-    DADOS["OBSERVACAO"]["FINALIZACAO"] = "OS temporariamente retida pelo N2."
+    DADOS["OBSERVACAO"]["FINALIZACAO"] = " OS temporariamente retida pelo N2."
     atualizar(True)
 
 def cancelada():
-    DADOS["OBSERVACAO"]["FINALIZACAO"] = "Realizado contato com o titular e confirmado normalidade, autorizado cancelamento da OS. Favor baixar sem execução."
+    DADOS["OBSERVACAO"]["FINALIZACAO"] = " Realizado contato com o titular e confirmado normalidade, autorizado cancelamento da OS. Favor baixar sem execução."
     atualizar(True)
     
 def getInternet():
     situacaoNET = ""
     INTERNET = DADOS["INTERNET"]
-    if "INTERNET" in cb_problem.get():
-        for i, widget in enumerate([frame_onu, frame_pppoe]): # Organizando os FRAMES de INTERNET
+    if "INTERNET" in cbProblema.get():
+        for i, widget in enumerate([frameOnu, framePPPoE]): # Organizando os FRAMES de INTERNET
             widget.grid(column=0, row=(i + 4), padx=10, pady=5, columnspan=5, sticky="nswe")
         
-        for i, widget in enumerate([cb_onu, cb_port, cb_alarm, cb_hist]): # Organizando os COMBOBOX do FRAME ONU
+        for i, widget in enumerate([cbOnu, cbPorta, cbAlarmes, cbHistorico]): # Organizando os COMBOBOX do FRAME ONU
             widget.grid(column=(i + 1), row=0, padx=5, pady=5)
         
-        for i, widget in enumerate([cb_pppoe, cb_desc, spacer2, sw_lentidao]): # Organizando os COMBOBOX do FRAME PPPOE
+        for i, widget in enumerate([cbPppoe, cbDesconexoes, spacer2, swLentidao]): # Organizando os COMBOBOX do FRAME PPPOE
             widget.grid(column=(i + 1), row=0, padx=5, pady=5)
 
         dbKeys = list(INTERNET.keys())
-        for comboBox in (cb_onu, cb_port, cb_alarm, cb_hist, cb_pppoe, cb_desc):
+        for comboBox in (cbOnu, cbPorta, cbAlarmes, cbHistorico, cbPppoe, cbDesconexoes):
             for key in dbKeys:
                 for element in INTERNET[key]:
                     if comboBox.get() == element:
                         situacaoNET += " " + INTERNET[key][element]
 
-        situacaoNET += INTERNET["LENTIDÃO"]["C/ LENTIDÃO" if sw_lentidao.get() else "S/ LENTIDÃO"]
+        situacaoNET += INTERNET["LENTIDÃO"]["C/ LENTIDÃO" if swLentidao.get() else "S/ LENTIDÃO"]
 
     else:
-        for widget in (frame_onu, frame_pppoe):
+        for widget in (frameOnu, framePPPoE):
             widget.grid_remove()
     return situacaoNET
 
 def getTV():
     situacaoTV = ""
     TV = DADOS["TV"]
-    if "TV" in cb_problem.get():
-        frame_tv.grid(column=0, row=6, padx=5, pady=5, columnspan=5, sticky="nswe")
-        for i, widget in enumerate([cb_tv, cb_tv2]):
+    if "TV" in cbProblema.get():
+        frameTv.grid(column=0, row=6, padx=5, pady=5, columnspan=5, sticky="nswe")
+        for i, widget in enumerate([cbTV, cbTV2]):
             widget.grid(column=(i + 1), row=4, padx=5, pady=5)        
-        tecnologia_selecionada = cb_tv.get()
+        tecnologia_selecionada = cbTV.get()
         if tecnologia_selecionada in TV:
-            cb_tv2["values"] = list(TV[tecnologia_selecionada].keys())
-            cb_tv2.configure(values=list(TV[tecnologia_selecionada].keys()))
+            cbTV2["values"] = list(TV[tecnologia_selecionada].keys())
+            cbTV2.configure(values=list(TV[tecnologia_selecionada].keys()))
 
-            opcao_selecionada = cb_tv2.get()
+            opcao_selecionada = cbTV2.get()
             if opcao_selecionada in TV[tecnologia_selecionada]:
                 situacaoTV = TV[tecnologia_selecionada][opcao_selecionada]
             else:
-                cb_tv2.set(list(TV[tecnologia_selecionada].keys())[0])
-                situacaoTV = TV[tecnologia_selecionada][cb_tv2.get()]
+                cbTV2.set(list(TV[tecnologia_selecionada].keys())[0])
+                situacaoTV = TV[tecnologia_selecionada][cbTV2.get()]
 
-    else: frame_tv.grid_remove()
+    else: frameTv.grid_remove()
     return situacaoTV
 
 
 # FRAME PRINICIPAL ----------------------------------------------------------------------
 customtkinter.set_appearance_mode("light")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("green")  # Themes: blue (default), dark-blue, green
-window  = customtkinter.CTk()  # create CTk window like you do with the Tk window
-window.iconbitmap(r'C:\Users\Matheus\Documents\Programação\att_script\img\icon.ico')
-window.title("Análise do N2")
-window.resizable(False, False)
+WINDOW  = customtkinter.CTk()  # create CTk WINDOW like you do with the Tk WINDOW
+WINDOW.iconbitmap(r'C:\Users\Matheus\Documents\Programação\att_script\img\icon.ico')
+WINDOW.title("Análise do N2")
+WINDOW.resizable(False, False)
 
 # FRAMES
-frame_head = LabelFrame(window, text='INICIO DA ANÁLISE', padx=5, pady=5)
-frame_onu = LabelFrame(window, text='ONU', padx=5, pady=5)
-frame_pppoe = LabelFrame(window, text='PPPOE', padx=5, pady=5)
-frame_tv = LabelFrame(window, text='TV', padx=5, pady=5)
-frame_end = LabelFrame(window, text='FIM DA ANÁLISE', padx=5, pady=5)
+frameHead = LabelFrame(WINDOW, text='INICIO DA ANÁLISE', padx=5, pady=5)
+frameOnu = LabelFrame(WINDOW, text='ONU', padx=5, pady=5)
+framePPPoE = LabelFrame(WINDOW, text='PPPOE', padx=5, pady=5)
+frameTv = LabelFrame(WINDOW, text='TV', padx=5, pady=5)
+frameFinal = LabelFrame(WINDOW, text='FIM DA ANÁLISE', padx=5, pady=5)
+
+# frame_titles = ['INICIO DA ANÁLISE', 'ONU', 'PPPOE', 'TV', 'FIM DA ANÁLISE']
+# frame_options = {'padx': 5, 'pady': 5}
+
+# frames = [LabelFrame(WINDOW, text=title, **frame_options) for title in frame_titles]
 
 # FRAME INICIAL ----------------------------------------------------------------------
 
-frame_head.grid(column=0, row=0, padx=10, pady=5, columnspan=5, sticky="nswe")
-spacer1 = customtkinter.CTkLabel(frame_head, text="",)
+frameHead.grid(column=0, row=0, padx=10, pady=5, columnspan=5, sticky="nswe")
+spacer1 = customtkinter.CTkLabel(frameHead, text="",)
 spacer1.grid(column=4,row=0, padx=200)
-spacer2 = customtkinter.CTkLabel(frame_pppoe, text="", width=210)
+spacer2 = customtkinter.CTkLabel(framePPPoE, text="", width=210)
 
-cb_user = customtkinter.CTkComboBox(frame_head, width=157, values = DADOS["USUÁRIOS"], state='readonly', command=atualizar)
-cb_user.set(DADOS["USUÁRIOS"][7])
-cb_user.grid(column=5,row=0, padx = 0, pady=0, sticky=E)
+cbUser = customtkinter.CTkComboBox(frameHead, width=157, values = DADOS["USUÁRIOS"], state='readonly', command=atualizar)
+cbUser.set(DADOS["USUÁRIOS"][7])
+cbUser.grid(column=5,row=0, padx = 0, pady=0, sticky=E)
 
 # FRAME OBSERVACAO -----------------------------------------------------------------
 
-text_obs = customtkinter.CTkTextbox(window, width=750, height=300, wrap=WORD, font=customtkinter.CTkFont(size=14,))
-text_obs.grid(column=0, row=2, columnspan=5, sticky=W,)
+textObservacao = customtkinter.CTkTextbox(WINDOW, width=750, height=300, wrap=WORD, font=customtkinter.CTkFont(size=14,))
+textObservacao.grid(column=0, row=2, columnspan=5, sticky=W,)
 
 # FRAME INTERNET -----------------------------------------------------------------
-list_problem = ["", "TV", "INTERNET", "TV e INTERNET",]
-cb_problem = customtkinter.CTkComboBox(frame_head, values = list_problem, state='readonly', command=atualizar)
-cb_problem.grid(column=1,row=0, padx=5, pady=5,)
-list_onu = ["ONLINE", "OFFLINE (LOS)", "OFFLINE (ENERGIA)"]
-cb_onu = customtkinter.CTkComboBox(frame_onu, values = list_onu, state='readonly', command=atualizar)
-cb_onu.set(list_onu[0])
-list_port = ["PORTA NORMAL", "PORTA EM VERIFICAÇÃO"]
-cb_port = customtkinter.CTkComboBox(frame_onu, values = list_port, state='readonly', command=atualizar)
-cb_port.set(list_port[0])
-list_alarm = ["C/ ALARMES", "S/ ALARMES"]
-cb_alarm = customtkinter.CTkComboBox(frame_onu, values = list_alarm, state='readonly', command=atualizar)
-cb_alarm.set(list_alarm[1])
-list_pppoe = ["CONECTADO", "DESCONECTADO"]
-cb_pppoe = customtkinter.CTkComboBox(frame_pppoe, values = list_pppoe, state='readonly', command=atualizar)
-cb_pppoe.set(list_pppoe[0])
-list_desc = ["C/ DESCONEXÕES", "S/ DESCONEXÕES"]
-cb_desc = customtkinter.CTkComboBox(frame_pppoe, values = list_desc, state='readonly', command=atualizar)
-cb_desc.set(list_desc[1])
-list_hist = ["HISTÓRICO NORMAL", "HISTÓRICO ALTERADO"]
-cb_hist = customtkinter.CTkComboBox(frame_onu, values = list_hist, state='readonly', command=atualizar)
-cb_hist.set(list_hist[0])
-sw_lentidao = customtkinter.CTkSwitch(master=frame_pppoe, command=lambda: atualizar(True), text="LENTIDÃO", state='disable')
+cbProblema = customtkinter.CTkComboBox(frameHead, values = DADOS["PROBLEMAS"], state='readonly', command=atualizar)
+cbProblema.grid(column=1,row=0, padx=5, pady=5,)
+
+cbOnu = customtkinter.CTkComboBox(frameOnu, values = list(DADOS["INTERNET"]["STATUS"].keys()), state='readonly', command=atualizar)
+cbOnu.set(list(DADOS["INTERNET"]["STATUS"].keys())[0])
+
+cbPorta = customtkinter.CTkComboBox(frameOnu, values = list(DADOS["INTERNET"]["PORTA"].keys()), state='readonly', command=atualizar)
+cbPorta.set(list(DADOS["INTERNET"]["PORTA"].keys())[0])
+
+cbAlarmes = customtkinter.CTkComboBox(frameOnu, values = list(DADOS["INTERNET"]["ALARMES"].keys()), state='readonly', command=atualizar)
+cbAlarmes.set(list(DADOS["INTERNET"]["ALARMES"].keys())[0])
+
+cbPppoe = customtkinter.CTkComboBox(framePPPoE, values = list(DADOS["INTERNET"]["PPPOE"].keys()), state='readonly', command=atualizar)
+cbPppoe.set(list(DADOS["INTERNET"]["PPPOE"].keys())[0])
+
+cbDesconexoes = customtkinter.CTkComboBox(framePPPoE, values = list(DADOS["INTERNET"]["DESCONEXÕES"].keys()), state='readonly', command=atualizar)
+cbDesconexoes.set(list(DADOS["INTERNET"]["DESCONEXÕES"].keys())[0])
+
+cbHistorico = customtkinter.CTkComboBox(frameOnu, values = list(DADOS["INTERNET"]["HISTÓRICO"].keys()), state='readonly', command=atualizar)
+cbHistorico.set(list(DADOS["INTERNET"]["HISTÓRICO"].keys())[0])
+
+swLentidao = customtkinter.CTkSwitch(master=framePPPoE, command=lambda: atualizar(True), text="LENTIDÃO", state='disable')
 
 # FRAME TV --------------------------------------------------------------------------------------------------------
-list_tv = ["COAXIAL", "TV-FIBRA", "BOX-PREMIUM"]
-cb_tv = customtkinter.CTkComboBox(frame_tv, values = list_tv, state='readonly', command=atualizar)
-cb_tv.set(list_tv[0])
+cbTV = customtkinter.CTkComboBox(frameTv, values = list(DADOS["TV"].keys()), state='readonly', command=atualizar)
+cbTV.set(list(DADOS["TV"].keys())[0])
 
-list_tv2 = ["ÁREA NORMAL", "ÁREA EM VERIFICAÇÃO"]
-cb_tv2 = customtkinter.CTkComboBox(frame_tv, values = list_tv2, state='readonly', command=atualizar)
-cb_tv2.set(list_tv2[0])
+cbTV2 = customtkinter.CTkComboBox(frameTv, values = list(DADOS["TV"]["COAXIAL"].keys()), state='readonly', command=atualizar)
+cbTV2.set(list(DADOS["TV"]["COAXIAL"].keys())[0])
 
 # FRAME FINAL -----------------------------------------------------------------
-frame_end.grid(column=0, row=8, padx=10, pady=5, columnspan=5, sticky="nswe")
+frameFinal.grid(column=0, row=8, padx=10, pady=5, columnspan=5, sticky="nswe")
 var_end = IntVar()
-rb_retida = customtkinter.CTkRadioButton(frame_end, text = "OS retida", variable = var_end, value = 1, command=retida)
-rb_liberada = customtkinter.CTkRadioButton(frame_end, text = "OS liberada", variable = var_end, value = 2, command=liberada)
-rb_cancelada = customtkinter.CTkRadioButton(frame_end, text = "OS cancelada", variable = var_end, value = 3, command=cancelada)
-bt_clear = customtkinter.CTkButton(master=frame_end, text="Limpar", command=clear, fg_color="red", hover_color="#d94545", width=120)
-bt_copy = customtkinter.CTkButton(master=frame_end, text="Copiar", command=ctrlc, width=120)
+rbRetida = customtkinter.CTkRadioButton(frameFinal, text = "OS retida", variable = var_end, value = 1, command=retida)
+rbLiberada = customtkinter.CTkRadioButton(frameFinal, text = "OS liberada", variable = var_end, value = 2, command=liberada)
+rbCancelada = customtkinter.CTkRadioButton(frameFinal, text = "OS cancelada", variable = var_end, value = 3, command=cancelada)
+btClear = customtkinter.CTkButton(master=frameFinal, text="Limpar", command=clear, fg_color="red", hover_color="#d94545", width=120)
+btCopy = customtkinter.CTkButton(master=frameFinal, text="Copiar", command=ctrlc, width=120)
 
-for i, widget in enumerate([rb_retida, rb_liberada, rb_cancelada, bt_clear, bt_copy]):
+for i, widget in enumerate([rbRetida, rbLiberada, rbCancelada, btClear, btCopy]):
     widget.grid(column=i, row=0, padx=10, pady=5)
 
 # FRAME AUTOR -----------------------------------------------------------------
-frame_autor = customtkinter.CTkFrame(master=window, height=20, fg_color="#ebebeb")
-frame_autor.grid(column=0, row=10, padx=10, pady=5, columnspan=5, sticky="nswe")
+frameRodape = customtkinter.CTkFrame(master=WINDOW, height=20, fg_color="#ebebeb")
+frameRodape.grid(column=0, row=10, padx=10, pady=5, columnspan=5, sticky="nswe")
 
-lb_autor = customtkinter.CTkLabel(master = frame_autor, text="Contact for support or further information: vynijales@gmail.com.")
-frame_autor.grid_rowconfigure(0, weight=1)
-frame_autor.grid_columnconfigure(0, weight=1)
-lb_autor.grid(row=0, column=0, sticky="nsew")
+lbRodape = customtkinter.CTkLabel(master = frameRodape, text="Contact for support or further information: vynijales@gmail.com.")
+frameRodape.grid_rowconfigure(0, weight=1)
+frameRodape.grid_columnconfigure(0, weight=1)
+lbRodape.grid(row=0, column=0, sticky="nsew")
 
-window.mainloop()
+WINDOW.mainloop()
 
