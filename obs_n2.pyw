@@ -4,9 +4,9 @@ import customtkinter
 import pyperclip as pc
 import datetime
 
-dados = {
-  "SECTOR": "N2: ",
-  "USERS": [
+DADOS = {
+  "SETOR": "N2: ",
+  "USUÁRIOS": [
     "ANABARBOSA",
     "ANACLARA",
     "BRUNOBANDEIRA",
@@ -20,192 +20,136 @@ dados = {
     "WALKDERLYPEREIRA",
     "PEDROWENISTON"
   ],
-  "PROBLEM": [
-    "",
-    "TV",
-    "INTERNET",
-    "TV e INTERNET"
-  ],
-  "ONU_STATUS": [
-    "ONLINE",
-    "OFFLINE (LOS)",
-    "OFFLINE (ENERGIA)",
-    "ONU CADASTRADA"
-  ],
-  "PORT": [
-    "PORTA NORMAL",
-    "PORTA EM VERIFICAÇÃO"
-  ],
-  "ONU_ALARM": [
-    "C/ ALARMES",
-    "S/ ALARMES"
-  ],
-  "PPPOE_STATUS": [
-    "CONECTADO",
-    "DESCONECTADO"
-  ],
-  "PPPOE_HIST": [
-    "C/ DESCONEXÕES",
-    "S/ DESCONEXÕES"
-  ],
-  "COAXIAL": [
-    "COAXIAL",
-    "TV-FIBRA",
-    "BOX-PREMIUM"
-  ],
-  "LENT": [
-    "",
-    "Checado VLAN, GATEWAY e IP. Velocidade contratada liberada no CMTS e ONU cadastrada com Port Rate /1000"
-  ]
-}
+  "INTERNET" : {
+            "STATUS": {
+                "ONLINE": "ONU ONLINE.",
+                "OFFLINE (LOS)": "ONU OFFLINE, com alarme de LOS.",
+                "OFFLINE (ENERGIA)": "ONU OFFLINE, com alarme de ENERGIA."
+            },
+            "PORTA": {
+                "PORTA NORMAL": "Checado porta, nenhum problema geral.",
+                "PORTA EM VERIFICAÇÃO": "Foi identificado outras ONUs com alarme de queda no mesmo horário.",
+            },
+            "ALARMES": {
+                "S/ ALARMES": "Sem alarmes de queda recorrentes.",
+                "C/ ALARMES": "Com alarmes de LOS/Energia recorrentes."
+            },
+            "HISTÓRICO": {
+                "HISTÓRICO NORMAL": "Sinal 1490 normal no histórico.",
+                "HISTÓRICO ALTERADO": "Sinal 1490 alterado em -30.0 dBm no histórico."
+            },
+            "PPPoE": {
+                "CONECTADO": "PPPoE conectado,",
+                "DESCONECTADO": "PPPoE desconectado,"
+            },
+            "DESCONEXÕES": {
+                "S/ DESCONEXÕES": "sem múltiplas desconexões diárias.",
+                "C/ DESCONEXÕES": "com múltiplas desconexões."
+            },
+            "LENTIDÃO": {
+                "S/ LENTIDÃO": "",
+                "C/ LENTIDÃO": " Checado VLAN, GATEWAY e IP. Velocidade liberada no CMTS e ONU cadastrada com Port Rate /1000."
+            }
+        },
+  "TV": {
+            "COAXIAL": {
+                "ÁREA NORMAL": "Cliente possui tecnologia COAXIAL, sem reclamações o suficiente para acionar a Equipe de Rede na Região. ",
+                "ÁREA EM VERIFICAÇÃO": "Cliente possui tecnologia COAXIAL, identificado clientes com o mesmo problema na Região. Acionado a Equipe de Rede para verificar. "
+            },
+            "TV-FIBRA": {
+                "RX NORMAL": "Cliente possui tecnologia TV-FIBRA, Sinal 1490 normal. ",
+                "RX ALTERADO": "Cliente possui tecnologia TV-FIBRA, Sinal 1490 alterado (-30.0 dBm). ",
+                "SINAL OFF": "Cliente possui tecnologia TV-FIBRA, está sem sinal de Internet e TV. "
+            },
+            "BOX-PREMIUM": {
+                "LOGIN OK": "Cliente possui tecnologia TV BOX PREMIUM, testado login na Plataforma WEB, aparentemente normal. ",
+                "LOGIN OFF": "Cliente possui tecnologia TV BOX PREMIUM, testado login na Plataforma WEB, sem acesso. Situação encaminhada para o CQ. "
+            }
+        },
+    "OBSERVACAO": {
+        "PRINCIPAL": "",
+        "SITUACAO": "",
+        "FINALIZACAO": ""
+    }
 
-obs = ""
-setor = "N2: "
-situacao = ""
-end = ""
-
-db = {"onu": "",
-"port": "",
-"alarm": "",
-"pppoe": "",
-"desc": "",
-"hist": "",
-"lent": "",
 }
 
 def atualizar(variable):
-    global user
-    checar_problema()
-    user = cb_user.get()
     text_obs.delete("1.0", "end")
-    text_obs.insert(END, f"{setor + situacao + end}\n\n{user}{rodape()}")
-
+    text_obs.insert(END, f'{DADOS["SETOR"] + getInternet() + getTV() + DADOS["OBSERVACAO"]["FINALIZACAO"]}\n\n{cb_user.get()}{rodape()}')
 
 def rodape():
     today = datetime.datetime.now()
     td = today.strftime("%d/%m/%Y - %H:%M")
-    
     return f" - {td}\n"+("-"*51)
 
 def clear():
-    global obs, setor, end, situacao
-    situacao = ""
     cb_problem.set("")
-
     atualizar(True)
 
 def ctrlc():
-    text = text_obs.get("1.0","end-1c")
-    pc.copy(text)
+    pc.copy(text_obs.get("1.0","end-1c"))
 
 def liberada():
-    global end
-    end = "OS liberada e encaminhada para a equipe de assistência."
+    DADOS["OBSERVACAO"]["FINALIZACAO"] = "OS liberada e encaminhada para a equipe de assistência."
     atualizar(True)
 
 def retida():
-    global end
-    end = "OS temporariamente retida pelo N2."
+    DADOS["OBSERVACAO"]["FINALIZACAO"] = "OS temporariamente retida pelo N2."
     atualizar(True)
 
 def cancelada():
-    global end
-    end = "Realizado contato com o titular e confirmado normalidade, autorizado cancelamento da OS. Favor baixar sem execução."
+    DADOS["OBSERVACAO"]["FINALIZACAO"] = "Realizado contato com o titular e confirmado normalidade, autorizado cancelamento da OS. Favor baixar sem execução."
     atualizar(True)
     
+def getInternet():
+    situacaoNET = ""
+    INTERNET = DADOS["INTERNET"]
+    if "INTERNET" in cb_problem.get():
+        for i, widget in enumerate([frame_onu, frame_pppoe]): # Organizando os FRAMES de INTERNET
+            widget.grid(column=0, row=(i + 4), padx=10, pady=5, columnspan=5, sticky="nswe")
+        
+        for i, widget in enumerate([cb_onu, cb_port, cb_alarm, cb_hist]): # Organizando os COMBOBOX do FRAME ONU
+            widget.grid(column=(i + 1), row=0, padx=5, pady=5)
+        
+        for i, widget in enumerate([cb_pppoe, cb_desc, spacer2, sw_lentidao]): # Organizando os COMBOBOX do FRAME PPPOE
+            widget.grid(column=(i + 1), row=0, padx=5, pady=5)
 
-def checar_problema():
-    if cb_problem.get() == "INTERNET":
-        sem_acesso()
+        dbKeys = list(INTERNET.keys())
+        for comboBox in (cb_onu, cb_port, cb_alarm, cb_hist, cb_pppoe, cb_desc):
+            for key in dbKeys:
+                for element in INTERNET[key]:
+                    if comboBox.get() == element:
+                        situacaoNET += " " + INTERNET[key][element]
+
+        situacaoNET += INTERNET["LENTIDÃO"]["C/ LENTIDÃO" if sw_lentidao.get() else "S/ LENTIDÃO"]
+
     else:
-        com_acesso()
+        for widget in (frame_onu, frame_pppoe):
+            widget.grid_remove()
+    return situacaoNET
 
-    if cb_problem.get() == "TV":
-        sem_sinal()
-    else:
-        com_sinal()
+def getTV():
+    situacaoTV = ""
+    TV = DADOS["TV"]
+    if "TV" in cb_problem.get():
+        frame_tv.grid(column=0, row=6, padx=5, pady=5, columnspan=5, sticky="nswe")
+        for i, widget in enumerate([cb_tv, cb_tv2]):
+            widget.grid(column=(i + 1), row=4, padx=5, pady=5)        
+        tecnologia_selecionada = cb_tv.get()
+        if tecnologia_selecionada in TV:
+            cb_tv2["values"] = list(TV[tecnologia_selecionada].keys())
+            cb_tv2.configure(values=list(TV[tecnologia_selecionada].keys()))
 
-    if cb_problem.get() == "TV e INTERNET":
-        sinal_total()
-    else:
-        pass
-    
+            opcao_selecionada = cb_tv2.get()
+            if opcao_selecionada in TV[tecnologia_selecionada]:
+                situacaoTV = TV[tecnologia_selecionada][opcao_selecionada]
+            else:
+                cb_tv2.set(list(TV[tecnologia_selecionada].keys())[0])
+                situacaoTV = TV[tecnologia_selecionada][cb_tv2.get()]
 
-def sem_acesso():
-    global situacao
-    for i, widget in enumerate([frame_onu, frame_pppoe]):
-        widget.grid(column=0, row=(i + 4), padx=10, pady=5, columnspan=5, sticky="nswe")
-    
-    for i, widget in enumerate([cb_onu, cb_port, cb_alarm, cb_hist]):
-        widget.grid(column=(i + 1), row=0, padx=5, pady=5)
-    
-    for i, widget in enumerate([cb_pppoe, cb_desc, spacer2, sw_lentidao]):
-        widget.grid(column=(i + 1), row=0, padx=5, pady=5)
-
-    db = {
-        "ONU": f"ONU {cb_onu.get()}",
-        "PORT": "porta normal" if cb_port.get() == list_port[0] else "porta em verificação",
-        "ALARM": "com alarmes recorrentes de LOS/Energia" if cb_alarm.get() == list_alarm[0] else "sem alarmes de quedas recorrentes",
-        "HIST": "histórico de sinal normal" if cb_hist.get() == list_hist[0] else "com histórico de sinal alterado em -30.0 dBm",
-        "PPPOE": f"PPPoE {cb_pppoe.get()}",
-        "DESC": "com múltiplas desconexões" if cb_desc.get() == list_desc[0] else "sem múltiplas desconexões",
-        "LENT": "Checado VLAN, GATEWAY e IP. Velocidade liberada no CMTS e ONU cadastrada com Port Rate /1000." if sw_lentidao.get() else ""
-    }
-
-    situacao = f'{db["ONU"]}, {db["PORT"]}, {db["ALARM"]} e {db["HIST"]}. {db["PPPOE"]}, {db["DESC"]}. {db["LENT"]}'
-
-def com_acesso():
-    global situacao
-    for widget in (frame_onu, frame_pppoe):
-        widget.grid_remove()
-    situacao = ""
-
-
-def sem_sinal():
-    global situacao
-    frame_tv.grid(column=0, row=6, padx=5, pady=5, columnspan=5, sticky="nswe")
-    for i, widget in enumerate([cb_tv, cb_tv2]):
-        widget.grid(column=(i + 1), row=4, padx=5, pady=5)
-
-    db = {
-        "COAXIAL": {
-            "ÁREA NORMAL": "Cliente possui tecnologia COAXIAL, sem reclamações o suficiente para acionar a Equipe de Rede na Região. ",
-            "ÁREA EM VERIFICAÇÃO": "Cliente possui tecnologia COAXIAL, identificado clientes com o mesmo problema na Região. Acionado a Equipe de Rede para verificar. "
-        },
-        "TV-FIBRA": {
-            "RX NORMAL": "Cliente possui tecnologia TV-FIBRA, Sinal 1490 normal. ",
-            "RX ALTERADO": "Cliente possui tecnologia TV-FIBRA, Sinal 1490 alterado (-30.0 dBm). ",
-            "SINAL OFF": "Cliente possui tecnologia TV-FIBRA, está sem sinal de Internet e TV. "
-        },
-        "BOX-PREMIUM": {
-            "LOGIN OK": "Cliente possui tecnologia TV BOX PREMIUM, testado login na Plataforma WEB, aparentemente normal. ",
-            "LOGIN OFF": "Cliente possui tecnologia TV BOX PREMIUM, testado login na Plataforma WEB, sem acesso. Situação encaminhada para o CQ. "
-        }
-    }
-
-    tecnologia_selecionada = cb_tv.get()
-    if tecnologia_selecionada in db:
-        cb_tv2["values"] = list(db[tecnologia_selecionada].keys())
-        cb_tv2.configure(values=list(db[tecnologia_selecionada].keys()))
-
-        opcao_selecionada = cb_tv2.get()
-        if opcao_selecionada in db[tecnologia_selecionada]:
-            situacao = db[tecnologia_selecionada][opcao_selecionada]
-        else:
-            cb_tv2.set(list(db[tecnologia_selecionada].keys())[0])
-            situacao = db[tecnologia_selecionada][cb_tv2.get()]
-
-
-def com_sinal():
-    frame_tv.grid_remove()
-
-    if cb_tv2.get() == "SINAL OFF":
-        cb_port.grid_remove()
-
-def sinal_total():
-    global situacao, db
-    sem_acesso()
-    sem_sinal()
+    else: frame_tv.grid_remove()
+    return situacaoTV
 
 
 # FRAME PRINICIPAL ----------------------------------------------------------------------
@@ -230,8 +174,8 @@ spacer1 = customtkinter.CTkLabel(frame_head, text="",)
 spacer1.grid(column=4,row=0, padx=200)
 spacer2 = customtkinter.CTkLabel(frame_pppoe, text="", width=210)
 
-cb_user = customtkinter.CTkComboBox(frame_head, width=157, values = dados["USERS"], state='readonly', command=atualizar)
-cb_user.set(dados["USERS"][7])
+cb_user = customtkinter.CTkComboBox(frame_head, width=157, values = DADOS["USUÁRIOS"], state='readonly', command=atualizar)
+cb_user.set(DADOS["USUÁRIOS"][7])
 cb_user.grid(column=5,row=0, padx = 0, pady=0, sticky=E)
 
 # FRAME OBSERVACAO -----------------------------------------------------------------
