@@ -3,6 +3,12 @@ from tkinter import ttk
 import customtkinter
 import pyperclip as pc
 import datetime
+import sys, os
+
+def resource_path(relative_path): # Função usada na hora de exportar para executável
+    """Get absolute path to resource, works for dev and for PyInstaller """
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
 
 DADOS = {
   "SETOR": "N2: ",
@@ -100,11 +106,11 @@ def liberada():
     atualizar(True)
 
 def retida():
-    DADOS["OBSERVACAO"]["FINALIZACAO"] = " A Ordem de Serviço foi temporariamente retida pelo Nível 2."
+    DADOS["OBSERVACAO"]["FINALIZACAO"] = "A Ordem de Serviço foi temporariamente retida pelo Nível 2."
     atualizar(True)
 
 def cancelada():
-    DADOS["OBSERVACAO"]["FINALIZACAO"] = " Realizado contato com o titular e o mesmo confirmou normalidade. Foi autorizado o cancelamentto da Ordem de serviço. Por favor, marque-a como não executada."
+    DADOS["OBSERVACAO"]["FINALIZACAO"] = "Realizado contato com o titular e o mesmo confirmou normalidade. Foi autorizado o cancelamentto da Ordem de serviço. Por favor, marque-a como não executada."
     atualizar(True)
     
 def getInternet():
@@ -157,7 +163,9 @@ def getTV():
 customtkinter.set_appearance_mode("light")
 customtkinter.set_default_color_theme("green")
 WINDOW = customtkinter.CTk()
-WINDOW.iconbitmap(r'C:\Users\Matheus\Documents\Programação\att_script\img\icon.ico')
+image_path = resource_path(r'C:\Users\Matheus\Documents\Programação\ANALISE-DE-OS\img\icon.ico')
+# WINDOW.iconbitmap(image_path)
+WINDOW.iconbitmap(r'C:\Users\Matheus\Documents\Programação\ANALISE-DE-OS\img\icon.ico')
 WINDOW.title("ANÁLISE DE OS - SISTEMA OESTE DE COMUNICAÇÃO LTDA")
 WINDOW.resizable(False, False)
 
@@ -175,7 +183,7 @@ cbUser.set(DADOS["USUÁRIOS"][7])
 cbUser.grid(column=5,row=0, padx = 0, pady=0, sticky=E)
 
 # FRAME OBSERVACAO
-textObservacao = customtkinter.CTkTextbox(WINDOW, width=620, height=300, wrap=WORD, font=customtkinter.CTkFont(size=14,))
+textObservacao = customtkinter.CTkTextbox(WINDOW, width=610, height=300, wrap=WORD, font=customtkinter.CTkFont(size=14,))
 textObservacao.grid(column=0, row=2, columnspan=4, sticky="nswe")
 
 # FRAME INTERNET
@@ -193,7 +201,7 @@ cbPppoe = customtkinter.CTkComboBox(frames[2], values = list(DADOS["INTERNET"]["
 cbPppoe.set(list(DADOS["INTERNET"]["PPPOE"].keys())[0])
 cbDesconexoes = customtkinter.CTkComboBox(frames[2], values = list(DADOS["INTERNET"]["DESCONEXÕES"].keys()), state='readonly', command=atualizar)
 cbDesconexoes.set(list(DADOS["INTERNET"]["DESCONEXÕES"].keys())[0])
-spacer2 = customtkinter.CTkLabel(frames[2], text="", width=170)
+spacer2 = customtkinter.CTkLabel(frames[2], text="", width=168)
 swLentidao = customtkinter.CTkSwitch(master=frames[2], command=lambda: atualizar(True), text="LENTIDÃO", state='disable')
 
 # FRAME TV
@@ -204,9 +212,9 @@ cbTV2.set(list(DADOS["TV"]["COAXIAL"].keys())[0])
 # FRAME FINAL
 frames[4].grid(column=0, row=8, padx=10, pady=5, columnspan=4, sticky="nswe")
 var_end = IntVar()
-rbRetida = customtkinter.CTkRadioButton(frames[4], text = "OS retida", variable = var_end, value = 1, command=retida)
-rbLiberada = customtkinter.CTkRadioButton(frames[4], text = "OS liberada", variable = var_end, value = 2, command=liberada)
-rbCancelada = customtkinter.CTkRadioButton(frames[4], text = "OS cancelada", variable = var_end, value = 3, command=cancelada)
+rbRetida = customtkinter.CTkRadioButton(frames[4], text = "RETIDA", variable = var_end, value = 1, command=retida)
+rbLiberada = customtkinter.CTkRadioButton(frames[4], text = "ASSISTÊNCIA", variable = var_end, value = 2, command=liberada)
+rbCancelada = customtkinter.CTkRadioButton(frames[4], text = "CANCELADA", variable = var_end, value = 3, command=cancelada)
 btClear = customtkinter.CTkButton(master=frames[4], text="Limpar", command=clear, fg_color="red", hover_color="#d94545", width=95)
 btCopy = customtkinter.CTkButton(master=frames[4], text="Copiar", command=ctrlc, width=95)
 for i, widget in enumerate([rbRetida, rbLiberada, rbCancelada, btClear, btCopy]): # Organizando os elementos do FRAME FINAL
