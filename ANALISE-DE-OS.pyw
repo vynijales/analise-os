@@ -5,10 +5,12 @@ import pyperclip as pc
 import datetime
 import sys, os
 
-def resource_path(relative_path): # Função usada na hora de exportar para executável
+def resource_path(relative_path): # Função usada ao exportar para executável
     """Get absolute path to resource, works for dev and for PyInstaller """
     base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
     return os.path.join(base_path, relative_path)
+
+
 
 DADOS = {
   "SETOR": "N2: ",
@@ -163,9 +165,13 @@ def getTV():
 customtkinter.set_appearance_mode("light")
 customtkinter.set_default_color_theme("green")
 WINDOW = customtkinter.CTk()
-image_path = resource_path(r'C:\Users\Matheus\Documents\Programação\ANALISE-DE-OS\img\icon.ico')
-# WINDOW.iconbitmap(image_path)
-WINDOW.iconbitmap(r'C:\Users\Matheus\Documents\Programação\ANALISE-DE-OS\img\icon.ico')
+#image_path = resource_path(r'C:\Users\Matheus\Documents\Programação\ANALISE-DE-OS\img\icon.ico')
+#WINDOW.iconbitmap(image_path)
+#WINDOW.iconbitmap(r'C:\Users\Matheus\Documents\Programação\ANALISE-DE-OS\img\icon.ico')
+#WINDOW.iconbitmap(resource_path('img/icon.ico'))
+image=resource_path("img\icon.ico")
+WINDOW.iconphoto(False, PhotoImage(file=resource_path('img/icon.png')))
+# WINDOW.iconphoto(True, PhotoImage(file=image))
 WINDOW.title("ANÁLISE DE OS - SISTEMA OESTE DE COMUNICAÇÃO LTDA")
 WINDOW.resizable(False, False)
 
