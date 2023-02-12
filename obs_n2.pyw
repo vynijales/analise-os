@@ -158,7 +158,7 @@ customtkinter.set_appearance_mode("light")
 customtkinter.set_default_color_theme("green")
 WINDOW = customtkinter.CTk()
 WINDOW.iconbitmap(r'C:\Users\Matheus\Documents\Programação\att_script\img\icon.ico')
-WINDOW.title("ANÁLISE DE OS N2 - SISTEMA OESTE DE COMUNICAÇÃO LTDA")
+WINDOW.title("ANÁLISE DE OS - SISTEMA OESTE DE COMUNICAÇÃO LTDA")
 WINDOW.resizable(False, False)
 
 # CRIANDO OS FRAMES
