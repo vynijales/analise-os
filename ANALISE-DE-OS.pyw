@@ -10,7 +10,7 @@ def resource_path(relative_path): # Função usada ao exportar para executável
     base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
     return os.path.join(base_path, relative_path)
 
-
+TOTALCOLUNAS = 6
 
 DADOS = {
   "SETOR": "N2: ",
@@ -30,10 +30,15 @@ DADOS = {
   ],
   "PROBLEMAS" : ["", "TV", "INTERNET", "TV e INTERNET"],
   "INTERNET" : {
+            "MODELO ONU": {
+                "FIBERHOME": "ONU FIBERHOME",
+                "ZTE": "ONU ZTE",
+                "HUAWEI": "ONU HUAWEI"
+            },
             "STATUS": {
-                "ONLINE": "ONU ONLINE.",
-                "OFFLINE (LOS)": "ONU OFFLINE, com alarme de LOS.",
-                "OFFLINE (ENERGIA)": "ONU OFFLINE, com alarme de ENERGIA."
+                "ONLINE": "online.",
+                "OFFLINE (LOS)": "offline, com alarme de LOS.",
+                "OFFLINE (ENERGIA)": "offline, com alarme de ENERGIA."
             },
             "PORTA": {
                 "PORTA NORMAL": "A porta foi verificada e não foi encontrado nenhum problema geral.",
@@ -46,6 +51,14 @@ DADOS = {
             "HISTÓRICO": {
                 "HISTÓRICO NORMAL": "Sinal 1490 normal no histórico.",
                 "HISTÓRICO ALTERADO": "Sinal 1490 alterado em -30.0 dBm no histórico."
+            },
+            "MODELO RT": {
+                "RT TP-LINK": "Rt TP-LINK com",
+                "RT INTELBRAS": "Rt INTELBRAS com",
+                "RT ZTE": "Rt ZTE com",
+                "RT HUAWEI": "Rt HUAWEI com",
+                "RT PARTICULAR": "Rt particular com",
+                "RB MIKROTIK": "Rb MikroTik com",
             },
             "PPPOE": {
                 "CONECTADO": "PPPoE conectado,",
@@ -76,7 +89,7 @@ DADOS = {
             },
             "BOX-PREMIUM": {
                 "LOGIN OK": "Cliente possui TV BOX-PREMIUM, testado login na Plataforma WEB e aparentemente está funcionando corretamente. ",
-                "LOGIN OFF": "Cliente possui TV BOX-PREMIUM, testado login na Plataforma WEB e não foi possível acessar. A situação foi encaminhada para o de Controle de Qualidade para resolução. "
+                "LOGIN OFF": "Cliente possui TV BOX-PREMIUM, testado login na Plataforma WEB e não foi possível acessar. A situação foi encaminhada para o setor de Controle de Qualidade. "
             }
         },
   "OBSERVACAO": {
@@ -103,16 +116,16 @@ def clear():
 def ctrlc():
     pc.copy(textObservacao.get("1.0","end-1c"))
 
-def liberada():
+def assistencia():
     DADOS["OBSERVACAO"]["FINALIZACAO"] = "A Ordem de Serviço foi liberada e encaminhada para a equipe de assistência."
     atualizar(True)
 
 def retida():
-    DADOS["OBSERVACAO"]["FINALIZACAO"] = "A Ordem de Serviço foi temporariamente retida pelo Nível 2."
+    DADOS["OBSERVACAO"]["FINALIZACAO"] = "A Ordem de Serviço foi temporariamente retida pelo SAC N2."
     atualizar(True)
 
 def cancelada():
-    DADOS["OBSERVACAO"]["FINALIZACAO"] = "Realizado contato com o titular e o mesmo confirmou normalidade. Foi autorizado o cancelamentto da Ordem de serviço. Por favor, marque-a como não executada."
+    DADOS["OBSERVACAO"]["FINALIZACAO"] = "Realizado contato com o titular, o mesmo confirmou normalidade e autorizou o cancelamento da Ordem de serviço. Por favor, marque-a como não executada."
     atualizar(True)
     
 def getInternet():
@@ -120,13 +133,13 @@ def getInternet():
     INTERNET = DADOS["INTERNET"] # Recebendo valores do banco de informação
     if "INTERNET" in cbProblema.get():
         for i, frame in enumerate([frames[1], frames[2]]): # Organizando os FRAMES de INTERNET
-            frame.grid(column=0, row=(i + 4), padx=5, pady=5, columnspan=4, sticky="nswe")
+            frame.grid(column=0, row=(i + 4), padx=5, pady=5, columnspan=TOTALCOLUNAS, sticky="nswe")
         
-        for i, widget in enumerate([cbOnu, cbPorta, cbAlarmes, cbHistorico, cbPppoe, cbDesconexoes, spacer2, swLentidao]): # Organizando os COMBOBOX dos FRAMES ONU e PPPoE 
+        for i, widget in enumerate([comboBoxOnu[0], comboBoxOnu[1], comboBoxOnu[2], comboBoxOnu[3], comboBoxOnu[4], comboBoxPppoe[0], comboBoxPppoe[1], comboBoxPppoe[2], spacer2, swLentidao]): # Organizando os COMBOBOX dos FRAMES ONU e PPPoE 
             widget.grid(column=(i + 1), row=0, padx=5, pady=5, sticky="nswe")
 
         dbKeys = list(INTERNET.keys())
-        for comboBox in (cbOnu, cbPorta, cbAlarmes, cbHistorico, cbPppoe, cbDesconexoes): # Checando as entradas de todos os COMBOBOX do Frame ONU e gerando o texto da internet
+        for comboBox in (comboBoxOnu[0], comboBoxOnu[1], comboBoxOnu[2], comboBoxOnu[3], comboBoxOnu[4], comboBoxPppoe[0], comboBoxPppoe[1], comboBoxPppoe[2]): # Checando as entradas de todos os COMBOBOX do Frame ONU e gerando o texto da internet
             for key in dbKeys:
                 for element in INTERNET[key]:
                     if comboBox.get() == element:
@@ -143,7 +156,7 @@ def getTV():
     situacaoTV = ""
     TV = DADOS["TV"] # Recebendo valores do banco de informação
     if "TV" in cbProblema.get():
-        frames[3].grid(column=0, row=6, padx=5, pady=5, columnspan=4, sticky="nswe") # Organiizando o FRAME de TV
+        frames[3].grid(column=0, row=6, padx=5, pady=5, columnspan=TOTALCOLUNAS, sticky="nswe") # Organiizando o FRAME de TV
         for i, comboBox in enumerate([cbTV, cbTV2]): # Organizando os COMBOBOX do Frame TV
             comboBox.grid(column=i, row=4, padx=5, pady=5)        
         tecnologia_selecionada = cbTV.get() # Recebe o valor do COMBOBOX TV 1
@@ -160,18 +173,12 @@ def getTV():
     else: frames[3].grid_remove() # Removendo o FRAME de TV, dessa forma a função está retornando 
     return situacaoTV
 
-
 # JANELA PRINCIPAL
 customtkinter.set_appearance_mode("light")
 customtkinter.set_default_color_theme("green")
 WINDOW = customtkinter.CTk()
-#image_path = resource_path(r'C:\Users\Matheus\Documents\Programação\ANALISE-DE-OS\img\icon.ico')
-#WINDOW.iconbitmap(image_path)
-#WINDOW.iconbitmap(r'C:\Users\Matheus\Documents\Programação\ANALISE-DE-OS\img\icon.ico')
-#WINDOW.iconbitmap(resource_path('img/icon.ico'))
-image=resource_path("img\icon.ico")
-WINDOW.iconphoto(False, PhotoImage(file=resource_path('img/icon.png')))
-# WINDOW.iconphoto(True, PhotoImage(file=image))
+# WINDOW.iconphoto(False, PhotoImage(file=resource_path('img/icon.png'))) # Converter para executável
+WINDOW.iconbitmap('img/icon.ico') # Enquanto programa local
 WINDOW.title("ANÁLISE DE OS - SISTEMA OESTE DE COMUNICAÇÃO LTDA")
 WINDOW.resizable(False, False)
 
@@ -181,32 +188,33 @@ frame_options = {'padx': 5, 'pady': 5}
 frames = [LabelFrame(WINDOW, text=title, **frame_options) for title in frame_titles]
 
 # FRAME CABECALHO 
-frames[0].grid(column=0, row=0, padx=10, pady=5, columnspan=4, sticky="nswe")
+frames[0].grid(column=0, row=0, padx=10, pady=5, columnspan=TOTALCOLUNAS, sticky="nswe")
+
+cbProblema = customtkinter.CTkComboBox(frames[0], values = DADOS["PROBLEMAS"], state='readonly', command=atualizar)
+cbProblema.grid(column=1,row=0, padx=5, pady=5,)
 spacer1 = customtkinter.CTkLabel(frames[0], text="",)
-spacer1.grid(column=4,row=0, padx=140)
+spacer1.grid(column=4,row=0, padx=215)
 cbUser = customtkinter.CTkComboBox(frames[0], width=157, values = DADOS["USUÁRIOS"], state='readonly', command=atualizar)
 cbUser.set(DADOS["USUÁRIOS"][7])
-cbUser.grid(column=5,row=0, padx = 0, pady=0, sticky=E)
+cbUser.grid(column=(TOTALCOLUNAS - 1), row=0, padx = 5, pady=5, sticky="e")
 
 # FRAME OBSERVACAO
 textObservacao = customtkinter.CTkTextbox(WINDOW, width=610, height=300, wrap=WORD, font=customtkinter.CTkFont(size=14,))
-textObservacao.grid(column=0, row=2, columnspan=4, sticky="nswe")
+textObservacao.grid(column=0, row=2, columnspan=TOTALCOLUNAS, sticky="nswe")
 
 # FRAME INTERNET
-cbProblema = customtkinter.CTkComboBox(frames[0], values = DADOS["PROBLEMAS"], state='readonly', command=atualizar)
-cbProblema.grid(column=1,row=0, padx=5, pady=5,)
-cbOnu = customtkinter.CTkComboBox(frames[1], values = list(DADOS["INTERNET"]["STATUS"].keys()), state='readonly', command=atualizar)
-cbOnu.set(list(DADOS["INTERNET"]["STATUS"].keys())[0])
-cbPorta = customtkinter.CTkComboBox(frames[1], values = list(DADOS["INTERNET"]["PORTA"].keys()), state='readonly', command=atualizar)
-cbPorta.set(list(DADOS["INTERNET"]["PORTA"].keys())[0])
-cbAlarmes = customtkinter.CTkComboBox(frames[1], values = list(DADOS["INTERNET"]["ALARMES"].keys()), state='readonly', command=atualizar)
-cbAlarmes.set(list(DADOS["INTERNET"]["ALARMES"].keys())[0])
-cbHistorico = customtkinter.CTkComboBox(frames[1], values = list(DADOS["INTERNET"]["HISTÓRICO"].keys()), state='readonly', command=atualizar)
-cbHistorico.set(list(DADOS["INTERNET"]["HISTÓRICO"].keys())[0])
-cbPppoe = customtkinter.CTkComboBox(frames[2], values = list(DADOS["INTERNET"]["PPPOE"].keys()), state='readonly', command=atualizar)
-cbPppoe.set(list(DADOS["INTERNET"]["PPPOE"].keys())[0])
-cbDesconexoes = customtkinter.CTkComboBox(frames[2], values = list(DADOS["INTERNET"]["DESCONEXÕES"].keys()), state='readonly', command=atualizar)
-cbDesconexoes.set(list(DADOS["INTERNET"]["DESCONEXÕES"].keys())[0])
+listaOnu = ["MODELO ONU", "STATUS", "PORTA", "ALARMES", "HISTÓRICO"]
+comboBoxOnu = [customtkinter.CTkComboBox(frames[1], values = list(DADOS["INTERNET"][cb].keys()), state='readonly', command=atualizar) for cb in listaOnu] # Criando COMBOBOXes do FRAME ONU
+
+listaPppoe = ["MODELO RT", "PPPOE", "DESCONEXÕES"]
+comboBoxPppoe = [customtkinter.CTkComboBox(frames[2], values = list(DADOS["INTERNET"][cb].keys()), state='readonly', command=atualizar) for cb in listaPppoe] # Criando COMBOBOXes do FRAME PPPoE
+
+for i, cb in enumerate(comboBoxOnu):
+    cb.set(list(DADOS["INTERNET"][listaOnu[i]].keys())[0])
+
+for i, cb in enumerate(comboBoxPppoe):
+    cb.set(list(DADOS["INTERNET"][listaPppoe[i]].keys())[0])
+
 spacer2 = customtkinter.CTkLabel(frames[2], text="", width=168)
 swLentidao = customtkinter.CTkSwitch(master=frames[2], command=lambda: atualizar(True), text="LENTIDÃO", state='disable')
 
@@ -216,19 +224,20 @@ cbTV.set(list(DADOS["TV"].keys())[0])
 cbTV2 = customtkinter.CTkComboBox(frames[3], values = list(DADOS["TV"]["COAXIAL"].keys()), state='readonly', command=atualizar)
 cbTV2.set(list(DADOS["TV"]["COAXIAL"].keys())[0])
 # FRAME FINAL
-frames[4].grid(column=0, row=8, padx=10, pady=5, columnspan=4, sticky="nswe")
+frames[4].grid(column=0, row=8, padx=10, pady=5, columnspan=TOTALCOLUNAS, sticky="nswe")
 var_end = IntVar()
-rbRetida = customtkinter.CTkRadioButton(frames[4], text = "RETIDA", variable = var_end, value = 1, command=retida)
-rbLiberada = customtkinter.CTkRadioButton(frames[4], text = "ASSISTÊNCIA", variable = var_end, value = 2, command=liberada)
+rbRetida = customtkinter.CTkRadioButton(frames[4], text = "SAC N2", variable = var_end, value = 1, command=retida)
+rbAssistencia = customtkinter.CTkRadioButton(frames[4], text = "ASSISTÊNCIA", variable = var_end, value = 2, command=assistencia)
 rbCancelada = customtkinter.CTkRadioButton(frames[4], text = "CANCELADA", variable = var_end, value = 3, command=cancelada)
-btClear = customtkinter.CTkButton(master=frames[4], text="Limpar", command=clear, fg_color="red", hover_color="#d94545", width=95)
-btCopy = customtkinter.CTkButton(master=frames[4], text="Copiar", command=ctrlc, width=95)
-for i, widget in enumerate([rbRetida, rbLiberada, rbCancelada, btClear, btCopy]): # Organizando os elementos do FRAME FINAL
+spacer3 = customtkinter.CTkLabel(frames[4], text="", width=120)
+btClear = customtkinter.CTkButton(master=frames[4], text="LIMPAR", command=clear, fg_color="red", hover_color="#d94545", width=95)
+btCopy = customtkinter.CTkButton(master=frames[4], text="COPIAR", command=ctrlc, width=95)
+for i, widget in enumerate([rbRetida, rbAssistencia, rbCancelada, spacer3, btClear, btCopy]): # Organizando os elementos do FRAME FINAL
     widget.grid(column=i, row=0, padx=10, pady=5)
 
 # FRAME AUTOR
 frameRodape = customtkinter.CTkFrame(master=WINDOW, height=20, fg_color="#ebebeb")
-frameRodape.grid(column=0, row=10, padx=10, pady=5, columnspan=4, sticky="nswe")
+frameRodape.grid(column=0, row=10, padx=10, pady=5, columnspan=TOTALCOLUNAS, sticky="nswe")
 lbRodape = customtkinter.CTkLabel(master = frameRodape, text="Contact for support or further information: vynijales@gmail.com.")
 frameRodape.grid_rowconfigure(0, weight=1)
 frameRodape.grid_columnconfigure(0, weight=1)
