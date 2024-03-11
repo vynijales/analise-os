@@ -3,102 +3,13 @@ from tkinter import ttk
 import customtkinter
 import pyperclip as pc
 import datetime
-import sys, os
 
-def resource_path(relative_path): # Função usada ao exportar para executável
-    """Get absolute path to resource, works for dev and for PyInstaller """
-    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
-    return os.path.join(base_path, relative_path)
+from utils.base import resource_path, open_json
 
 TOTALCOLUNAS = 6
 
-DADOS = {
-  "SETOR": "N2: ",
-  "USUÁRIOS": [
-    "ANABARBOSA",
-    "ANACLARA",
-    "BRUNOBANDEIRA",
-    "EDUARDOBARRETO",
-    "ERICKENRIQUE",
-    "IGOR",
-    "JOYCEJORDANIA",
-    "MATHEUSVYNICIUS",
-    "MIKAEL",
-    "NAELSON",
-    "WALKDERLYPEREIRA",
-    "PEDROWENISTON"
-  ],
-  "PROBLEMAS" : ["", "TV", "INTERNET", "TV e INTERNET"],
-  "INTERNET" : {
-            "MODELO ONU": {
-                "FIBERHOME": "ONU FIBERHOME",
-                "ZTE": "ONU ZTE",
-                "HUAWEI": "ONU HUAWEI"
-            },
-            "STATUS": {
-                "ONLINE": "online.",
-                "OFFLINE (LOS)": "offline, com alarme de LOS.",
-                "OFFLINE (ENERGIA)": "offline, com alarme de ENERGIA."
-            },
-            "PORTA": {
-                "PORTA NORMAL": "A porta foi verificada e não foi encontrado nenhum problema geral.",
-                "PORTA EM VERIFICAÇÃO": "Foram identificadas outras ONUs com alarme de queda no mesmo horário na porta.",
-            },
-            "ALARMES": {
-                "S/ ALARMES": "Sem alarmes de queda recorrentes.",
-                "C/ ALARMES": "Com alarmes de LOS/Energia recorrentes."
-            },
-            "HISTÓRICO": {
-                "HISTÓRICO NORMAL": "Sinal 1490 normal no histórico.",
-                "HISTÓRICO ALTERADO": "Sinal 1490 alterado em -30.0 dBm no histórico."
-            },
-            "MODELO RT": {
-                "RT TP-LINK": "Rt TP-LINK com",
-                "RT INTELBRAS": "Rt INTELBRAS com",
-                "RT ZTE": "Rt ZTE com",
-                "RT HUAWEI": "Rt HUAWEI com",
-                "RT PARTICULAR": "Rt particular com",
-                "RB MIKROTIK": "Rb MikroTik com",
-            },
-            "PPPOE": {
-                "CONECTADO": "PPPoE conectado,",
-                "DESCONECTADO": "PPPoE desconectado,"
-            },
-            "DESCONEXÕES": {
-                "S/ DESCONEXÕES": "sem múltiplas desconexões diárias. ",
-                "C/ DESCONEXÕES": "com múltiplas desconexões. "
-            },
-            "LENTIDÃO": {
-                "S/ LENTIDÃO": "",
-                "C/ LENTIDÃO": " Foram verificadas as configurações de VLAN, GATEWAY e IP. A velocidade foi liberada no CMTS e a ONU está registrada com Port Rate de 1000 Mbps."
 
-
-
-
-            }
-        },
-  "TV": {
-            "COAXIAL": {
-                "ÁREA NORMAL": "Cliente possui TV COAXIAL, sem reclamações o suficiente na região para acionar a Equipe de Rede. ",
-                "ÁREA EM VERIFICAÇÃO": "Cliente possui TV COAXIAL, outros clientes na região apresentam o mesmo problema. A equipe de rede foi acionada para investigar. "
-            },
-            "TV-FIBRA": {
-                "RX NORMAL": "Cliente possui TV-FIBRA, está com sinal 1490 normal. ",
-                "RX ALTERADO": "Cliente possui TV-FIBRA, está com sinal 1490 alterado (-30.0 dBm). ",
-                "SINAL OFF": "Cliente possui TV-FIBRA, está sem sinal de Internet e TV. "
-            },
-            "BOX-PREMIUM": {
-                "LOGIN OK": "Cliente possui TV BOX-PREMIUM, testado login na Plataforma WEB e aparentemente está funcionando corretamente. ",
-                "LOGIN OFF": "Cliente possui TV BOX-PREMIUM, testado login na Plataforma WEB e não foi possível acessar. A situação foi encaminhada para o setor de Controle de Qualidade. "
-            }
-        },
-  "OBSERVACAO": {
-        "PRINCIPAL": "",
-        "SITUACAO": "",
-        "FINALIZACAO": ""
-    }
-
-}
+DADOS = open_json(resource_path('data/db.json'))
 
 def atualizar(variable):
     textObservacao.delete("1.0", "end")
@@ -177,8 +88,11 @@ def getTV():
 customtkinter.set_appearance_mode("light")
 customtkinter.set_default_color_theme("green")
 WINDOW = customtkinter.CTk()
-# WINDOW.iconphoto(False, PhotoImage(file=resource_path('img/icon.png'))) # Converter para executável
-WINDOW.iconbitmap('img/icon.ico') # Enquanto programa local
+# WINDOW.iconphoto(False, PhotoImage(file=resource_path('assets/img/icon.ico'))) # Converter para executável
+path = resource_path('assets/img/icon.ico')
+path = 'assets/img/icon.ico'
+# WINDOW.iconbitmap(False, PhotoImage(file=path)) # Converter para executável
+WINDOW.iconbitmap(resource_path('assets/img/icon.ico')) # Enquanto programa local
 WINDOW.title("ANÁLISE DE OS - SISTEMA OESTE DE COMUNICAÇÃO LTDA")
 WINDOW.resizable(False, False)
 
