@@ -1,4 +1,5 @@
 import sys, os
+import datetime
 import json
 
 def resource_path(relative_path):
@@ -21,3 +22,14 @@ def open_json(file_path):
         print(f"Error decoding JSON file '{file_path}'.")
     except Exception as e:
         print(f"An error occurred while opening the file '{file_path}': {str(e)}")
+
+class Model:
+    data =  open_json(resource_path('data/db.json'))
+
+
+# uma função que retorne o dia e a hora atual
+
+def get_date_time():
+    today = datetime.datetime.now()
+    td = today.strftime("%d/%m/%Y - %H:%M")
+    return f" - {td}\n"+("-"*51)

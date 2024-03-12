@@ -1,0 +1,1 @@
+TOTALCOLUNAS = 6
