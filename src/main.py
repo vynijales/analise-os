@@ -1,49 +1,26 @@
 from tkinter import *
 import customtkinter
-import pyperclip as pc
 
 from utils.constants import TOTALCOLUNAS
-from utils.base import Model, resource_path, get_date_time
+from utils.base import Model, get_date_time
 from components.view import *
+from components.controller import Controller
 
 DADOS = Model.data
-
-
-class Controller:
-    def __init__(self):
-        self.setor = ""
-        self.internet = ""
-        self.tv = ""
-        self.finalizacao = ""
-        self.user = ""
-
-    def getInternet(self, source, target):
-        self.internet = ""
-        INTERNET = DADOS["INTERNET"]
-
-        # Deixarei esse método apenas para retornar o texto referente à internet, os objetos de tela serão criados em outra função
-        if "INTERNET" in source.get():
-            dbKeys = list(INTERNET.keys())
-            for comboBox in target:
-                for key in dbKeys:
-                    for element in INTERNET[key]:
-                        if comboBox.get() == element:
-                            self.internet += " " + INTERNET[key][element]
-
 
 controller = Controller()
 view = View()
 
 
 def atualizar(arg):
-    textObservacao.delete("1.0", "end")
+    view.mainText.delete("1.0", "end")
     setor = DADOS["SETOR"]
     internet = getInternet()
     tv = getTV()
     finalizacao = DADOS["OBSERVACAO"]["FINALIZACAO"]
     user = cbUser.get()
     data = get_date_time()
-    textObservacao.insert(
+    view.mainText.insert(
         END, f'{setor + internet + tv + finalizacao}\n\n{user}{data}')
 
 
@@ -51,9 +28,6 @@ def clear():
     cbProblema.set("")
     atualizar(True)
 
-
-def ctrlc():
-    pc.copy(textObservacao.get("1.0", "end-1c"))
 
 
 def assistencia():
@@ -116,9 +90,7 @@ def getTV():
     situacaoTV = ""
     TV = DADOS["TV"]  # Recebendo valores do banco de informação
     if "TV" in cbProblema.get():
-        # Organiizando o FRAME de TV
-        view.TvFrame.grid(column=0, row=6, padx=5, pady=5,
-                          columnspan=TOTALCOLUNAS, sticky="nswe")
+
         # Organizando os COMBOBOX do Frame TV
         for i, comboBox in enumerate([cbTecnologia, cbTV2]):
             comboBox.grid(column=i, row=4, padx=5, pady=5)
@@ -142,19 +114,7 @@ def getTV():
     return situacaoTV
 
 
-# WINDOW.iconbitmap(False, PhotoImage(file=path)) # Converter para executável
-# Enquanto programa local
-view.window.iconbitmap(resource_path('assets/img/icon.ico'))
-view.window.title("ANÁLISE DE OS - SISTEMA OESTE DE COMUNICAÇÃO LTDA")
-view.window.resizable(False, False)
-
-# CRIANDO OS FRAMES
-
 # FRAME CABECALHO
-# view.CabecalhoFrame.grid(column=0, row=0, padx=10, pady=5, columnspan=TOTALCOLUNAS, sticky="nswe")
-
-# cbProblema = customtkinter.CTkComboBox(view.CabecalhoFrame, width=157, values = DADOS["PROBLEMAS"], state='readonly', command=atualizar)
-# cbProblema.grid(column=0,row=0, padx=5, pady=5,)
 
 cbProblema = ComboBoxProblema(view.CabecalhoFrame, atualizar)
 
@@ -163,11 +123,8 @@ spacer1 = GapCabecalho(view.CabecalhoFrame)
 cbUser = ComboBoxUser(view.CabecalhoFrame, atualizar)
 
 # FRAME OBSERVACAO
-# textObservacao = customtkinter.CTkTextbox(
-#     view.window, height=300, wrap=WORD, font=customtkinter.CTkFont(size=14,))
-# textObservacao.grid(column=0, row=2, columnspan=TOTALCOLUNAS, sticky="nswe")
 
-textObservacao = MainText(view.window)
+# textObservacao = MainText(view.window)
 
 # FRAME INTERNET
 
@@ -192,28 +149,20 @@ spacer2 = GapInternet(view.PppoeFrame)
 swLentidao = customtkinter.CTkSwitch(master=view.PppoeFrame, command=lambda: atualizar(
     True), text="LENTIDÃO", state='disable')
 
-# FRAME TV
-# cbTecnologia = customtkinter.CTkComboBox(view.TvFrame, values = list(DADOS["TV"].keys()), state='readonly', command=atualizar)
-# cbTecnologia.set(list(DADOS["TV"].keys())[0])
 cbTecnologia = ComboBoxTecnologia(view.TvFrame, atualizar)
 
 cbTV2 = ComboBoxTV2(view.TvFrame, atualizar)
 # FRAME FINAL
 var_end = IntVar()
-# rbRetida = customtkinter.CTkRadioButton(view.FinalFrame, text = "SAC N2", variable = var_end, value = 1, command=retida)
-# rbAssistencia = customtkinter.CTkRadioButton(view.FinalFrame, text = "ASSISTÊNCIA", variable = var_end, value = 2, command=assistencia)
-# rbCancelada = customtkinter.CTkRadioButton(view.FinalFrame, text = "CANCELADA", variable = var_end, value = 3, command=cancelada)
 
 rbRetida = RadioButtonRetida(view.FinalFrame, var_end, retida)
 rbAssistencia = RadioButtonAssistencia(view.FinalFrame, var_end, assistencia)
 rbCancelada = RadioButtonCancelada(view.FinalFrame, var_end, cancelada)
+# btClear = ButtonClear(view.FinalFrame, view.mainText)
+# btCopy = ButtonCopy(view.FinalFrame, command=ctrlc)
 
-# spacer3 = customtkinter.CTkLabel(view.FinalFrame, text="", width=120)
-spacer3 = GapFinal(view.FinalFrame)
-btClear = ButtonClear(view.FinalFrame, command=clear)
-btCopy = ButtonCopy(view.FinalFrame, command=ctrlc)
 # Organizando os elementos do FRAME FINAL
-for i, widget in enumerate([rbRetida, rbAssistencia, rbCancelada, spacer3, btClear, btCopy]):
+for i, widget in enumerate([rbRetida, rbAssistencia, rbCancelada, view.FinalFrame.widgets[0], view.FinalFrame.widgets[1], view.FinalFrame.widgets[2]]):
     widget.grid(column=i, row=0, padx=10, pady=5)
 
 # FRAME AUTOR

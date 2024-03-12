@@ -1,13 +1,19 @@
 from tkinter import Frame, LabelFrame, Label
 import customtkinter
 
-from utils.base import Model
+from components.controller import Controller
+
+from utils.base import Model, resource_path
 from utils.constants import TOTALCOLUNAS
 
 
 class View:
     def __init__(self):
-        self.window = customtkinter.CTk()
+        self.setup()
+        self.createFrames()
+        self.createWidgets()
+
+    def createFrames(self):
         self.CabecalhoFrame = CabecalhoFrame(self.window)
         self.OnuFrame = OnuFrame(self.window)
         self.PppoeFrame = PppoeFrame(self.window)
@@ -15,8 +21,63 @@ class View:
         self.FinalFrame = FinalFrame(self.window)
         self.RodapeFrame = RodapeFrame(self.window)
 
+    def setup(self):
+        self.window = customtkinter.CTk()
+        self.window.iconbitmap(resource_path('assets/img/icon.ico'))
+        self.title = "ANÁLISE DE OS - SISTEMA OESTE DE COMUNICAÇÃO LTDA"
+        self.window.title(self.title)
         customtkinter.set_appearance_mode("light")
         customtkinter.set_default_color_theme("green")
+
+    def createWidgets(self):
+        self.mainText = MainText(self.window)
+        # self.gapCabecalho = GapCabecalho(self.CabecalhoFrame)
+        # self.gapInternet = GapInternet(self.OnuFrame)
+        # self.radioButtonRetida = RadioButtonRetida(self.FinalFrame, variable, atualizar)
+        # self.radioButtonAssistencia = RadioButtonAssistencia(self.FinalFrame, variable, atualizar)
+        # self.radioButtonCancelada = RadioButtonCancelada(self.FinalFrame, variable, atualizar)
+        self.gapFinal = GapFinal(self.FinalFrame)
+        self.buttonClear = ButtonClear(self.FinalFrame, command= lambda: Controller.clear(self, self.mainText))
+        self.buttonCopy = ButtonCopy(self.FinalFrame, command= lambda: Controller.ctrlc(self, self.mainText))
+        # self.comboBoxProblema = ComboBoxProblema(self.FinalFrame, atualizar)
+        # self.comboBoxUser = ComboBoxUser(self.FinalFrame, atualizar)
+        # self.comboBoxOnu = ComboBoxOnu(self.OnuFrame, atualizar)
+        # self.comboBoxTecnologia = ComboBoxTecnologia(self.TvFrame, atualizar)
+        # self.comboBoxTV2 = ComboBoxTV2(self.TvFrame, atualizar)
+
+    
+    # def getInternet(self):
+    #     situacaoNET = ""
+    #     # Recebendo valores do banco de informação
+    #     INTERNET = Model.data["INTERNET"]
+
+    #     if "INTERNET" in self.comboBoxProblema.get():
+    #         # createSectionInternet()  # Organizando os FRAMES de ONU e PPPoE
+
+    #         # Checando as entradas de todos os COMBOBOX do Frame ONU e gerando o texto da internet
+    #         for comboBox in (comboBoxOnu):
+    #             for key in Model.data["INTERNET"]["ONU"].keys():
+    #                 for element in INTERNET["ONU"][key]:
+    #                     if comboBox.get() == element:
+    #                         situacaoNET += " " + INTERNET["ONU"][key][element]
+
+    #         # Checando as entradas de todos os COMBOBOX do Frame PPPoE e gerando o texto da internet
+    #         for comboBox in (comboBoxPppoe):
+    #             for key in Model.data["INTERNET"]["RT"].keys():
+    #                 for element in INTERNET["RT"][key]:
+    #                     if comboBox.get() == element:
+    #                         situacaoNET += " " + INTERNET["RT"][key][element]
+
+    #         # Gerando texto referente à lentdão
+    #         situacaoNET += Model.data["LENTIDÃO"]["C/ LENTIDÃO" if swLentidao.get()
+    #                                             else "S/ LENTIDÃO"]
+
+    #     else:
+    #         # Removendo os FRAMES de ONU e PPPoE, dessa forma a função está retornando ""
+    #         for frame in (view.OnuFrame, view.PppoeFrame):
+    #             frame.grid_remove()
+    #     return situacaoNET
+
 
 
 class Frame(LabelFrame):
@@ -72,37 +133,41 @@ class RodapeFrame(Frame):
 class Gap(Label):
     def __init__(self, window, width):
         super().__init__(window, text="", width=width)
+        window.add_widget(self)
 
 
-class GapCabecalho(Label):
+class GapCabecalho(Gap):
     def __init__(self, window):
-        super().__init__(window, text="", width=60)
+        super().__init__(window, width=60)
         self.grid(row=0, column=4)
 
 
-class GapInternet(Label):
+class GapInternet(Gap):
     def __init__(self, window):
-        super().__init__(window, text="", width=23)
+        super().__init__(window, width=23)
         self.grid(row=0, column=TOTALCOLUNAS - 2)
 
 
-class GapFinal(Label):
+class GapFinal(Gap):
     def __init__(self, window):
-        super().__init__(window, text="", width=18)
+        super().__init__(window, width=18)
         self.grid(row=0, column=TOTALCOLUNAS - 3)
-
 
 class ButtonClear(customtkinter.CTkButton):
     def __init__(self, window, command):
         super().__init__(window, text="LIMPAR", command=command, fg_color="red", hover_color="#d94545", width=95)
+        window.add_widget(self)
 
 class ButtonCopy(customtkinter.CTkButton):
     def __init__(self, window, command):
         super().__init__(window, text="COPIAR", command=command, width=95)
+        window.add_widget(self)
+
 
 class RadioButton(customtkinter.CTkRadioButton):
     def __init__(self, window, text, variable, value, command):
         super().__init__(window, text=text, variable=variable, value=value, command=command)
+        window.add_widget(self)
 
 class RadioButtonRetida(RadioButton):
     def __init__(self, window, variable, command):
@@ -116,10 +181,10 @@ class RadioButtonCancelada(RadioButton):
     def __init__(self, window, variable, command):
         super().__init__(window, text="CANCELADA", variable=variable, value=3, command=command)
 
-
 class ComboBox(customtkinter.CTkComboBox):
     def __init__(self, window, values, command):
         super().__init__(window, width = 157, values=values, state="readonly", command=command)
+        window.add_widget(self)
 
 class ComboBoxProblema(ComboBox):
     def __init__(self, window, command):
@@ -146,7 +211,6 @@ class ComboBoxTV2(ComboBox):
     def __init__(self, window, command):
         super().__init__(window, values=list(Model.data["TV"]["COAXIAL"].keys()), command=command)
         self.set(list(Model.data["TV"]["COAXIAL"].keys())[0])
-
 
 class MainText(customtkinter.CTkTextbox):
     def __init__(self, window):
