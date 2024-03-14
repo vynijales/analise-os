@@ -90,25 +90,7 @@
             "LOGIN OFF": "Cliente possui TV BOX-PREMIUM, testado login na Plataforma WEB e não foi possível acessar. A situação foi encaminhada para o setor de Controle de Qualidade. "
         }
     },
-    "SOLUCAO": {
-        "INTERNET": {
-            "MODELO ONU": "",
-            "STATUS": "",
-            "PORTA": "",
-            "ALARMES": "",
-            "HISTÓRICO": "",
-            "MODELO RT": "",
-            "PPPOE": "",
-            "DESCONEXÕES": "",
-            "LENTIDÃO": ""
-        },
-        "TV": {
-            "COAXIAL": "",
-            "TV-FIBRA": "",
-            "BOX-PREMIUM": ""
-        }
-    },
-    "OBSERVACAO": {
+    "ANALISE": {
         "PRINCIPAL": "",
         "SITUACAO": "",
         "FINALIZACAO": ""

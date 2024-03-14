@@ -23,8 +23,6 @@ def open_json(file_path):
     except Exception as e:
         print(f"An error occurred while opening the file '{file_path}': {str(e)}")
 
-class Model:
-    data =  open_json(resource_path('data/db.json'))
 
 
 # uma função que retorne o dia e a hora atual
