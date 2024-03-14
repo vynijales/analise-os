@@ -5,7 +5,6 @@ from components.models import *
 
 def main():
     view = View()
-    view.SectionFinal()
     view.window.mainloop()
 
 if __name__ == "__main__":
