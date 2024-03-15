@@ -6,7 +6,7 @@ Este é um projeto individual que envolve o desenvolvimento de um software desti
 
 <div align="center">
 
-![analise-os](https://github.com/vynijales/analise-os/assets/92933508/4951966b-9d22-4d86-a62f-bb12cd88c920)
+https://github.com/vynijales/analise-os/assets/92933508/cef985d8-fa5c-488a-af3d-fe92fce50f4d
 
 </div>
 
