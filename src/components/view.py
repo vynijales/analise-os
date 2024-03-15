@@ -18,11 +18,10 @@ class View:
         self.createFrames()
         self.variable = StringVar()
         self.createWidgets()
-        self.adjust_window_height()
 
     def setup(self):
         self.window = customtkinter.CTk()
-        self.adjust_window_size()
+        self.window.geometry("849x656")
         self.window.iconbitmap(resource_path('assets/img/icon.ico'))
         self.title = "ANÁLISE DE OS - SISTEMA OESTE DE COMUNICAÇÃO LTDA"
         self.window.title(self.title)
@@ -33,19 +32,19 @@ class View:
     def createFrames(self):
         self.Header = Frame(master=self.window, title="INÍCIO DA ANALISE")
         self.Payload = Payload(self.window)
+        self.Tv = Frame(master=self.window, title="TV")
         self.Onu = Frame(master=self.window, title="ONU")
         self.Rt = Frame(master=self.window, title="RT")
-        self.Tv = Frame(master=self.window, title="TV")
         self.Final = Frame(master=self.window, title="FINALIZAÇÃO")
 
-        self.Header.pack(side="top", fill="both", expand=True)
+        self.Header.pack(side="top", fill="both", expand=False)
         self.Payload.pack(side="top", fill="both", expand=True)
         self.create_section_tv()
         self.create_section_internet()
         self.createSectionFinal()
 
     def create_section_tv(self):
-        self.Tv.pack(side="top", fill="both", expand=True)
+        self.Tv.pack(side="top", fill="both", expand=False)
         self.Tv.renderWidgets()
 
     def createWidgetsOnu(self):
@@ -55,15 +54,17 @@ class View:
         self.Rt.renderWidgets(3)
 
     def create_section_internet(self):
-        self.Onu.pack(side="top", fill="both", expand=True)
-        self.Rt.pack(side="top", fill="both", expand=True)
-        self.createWidgetsOnu()
+        self.Onu.pack(side="top", fill="both", expand=False)
+        self.Rt.pack(side="top", fill="both", expand=False)
         self.createWidgetsRt()
+        self.createWidgetsOnu()
 
     def createSectionFinal(self):
         self.lbRodape = Label(master=self.window, text="Contact for support or further information: vynijales@gmail.com.")
-        self.lbRodape.pack(side="bottom", fill="both", expand=True)
-        self.Final.pack(side="bottom", fill="both", expand=True)  # Position at the bottom
+        self.lbRodape.pack(side="bottom", fill="both", expand=False)
+        self.Final.pack(side="bottom", fill="both", expand=False)  # Position at the bottom
+        # self.lbRodape.pack_propagate(False)
+        # self.Final.pack_propagate(False)
 
     def createWidgets(self):
         self.cbProblema = ComboBox(master=self.Header, values=Model.data["PROBLEMAS"], view=self)
@@ -151,13 +152,3 @@ class View:
         self.Onu.pack_forget()
         self.Rt.pack_forget()
         self.Tv.pack_forget()
-        self.adjust_window_height()
-
-    def adjust_window_size(self):
-        self.window.geometry('849x1')
-        self.window.resizable(False, False)
-
-    def adjust_window_height(self):
-        self.window.update_idletasks()
-        height = self.window.winfo_reqheight()
-        self.window.geometry('849x' + str(height))

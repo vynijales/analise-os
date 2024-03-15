@@ -42,8 +42,8 @@ class Controller:
     def atualizar(view, value):
         view.Payload.delete("1.0", "end")
 
-        internet = Controller.internet_text(view)
         tv = Controller.tv_text(view)
+        internet = Controller.internet_text(view)
         setor = Model.data["SETOR"]
         finalizacao = Controller.finalizacao_text(value)
 
@@ -51,5 +51,3 @@ class Controller:
         data = get_date_time()
 
         view.Payload.insert("end", f'{setor + internet + tv + finalizacao}\n\n{user}{data}')
-
-        view.adjust_window_height()
