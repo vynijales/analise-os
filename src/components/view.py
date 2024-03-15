@@ -4,7 +4,7 @@ import customtkinter
 from models.frame import Frame
 from models.comboBox import ComboBox
 from models.switch import Switch
-from models.button import Button
+from models.button import Button, RadioButton
 
 from components.controller import Controller
 from models.models import Model, Payload
